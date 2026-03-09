@@ -1,0 +1,39 @@
+{
+  "directed": true,
+  "multigraph": false,
+  "graph": {},
+  "nodes": [
+    {
+      "type": "chain",
+      "id": "Ethereum"
+    },
+    {
+      "type": "chain",
+      "id": "Arbitrum"
+    },
+    {
+      "type": "protocol",
+      "id": "Uniswap"
+    }
+  ],
+  "edges": [
+    {
+      "relation": "l2_of",
+      "weight": 5,
+      "source_docs": [
+        "r2.pdf"
+      ],
+      "source": "Arbitrum",
+      "target": "Ethereum"
+    },
+    {
+      "relation": "deployed_on",
+      "weight": 3,
+      "source_docs": [
+        "r1.pdf"
+      ],
+      "source": "Uniswap",
+      "target": "Ethereum"
+    }
+  ]
+}
