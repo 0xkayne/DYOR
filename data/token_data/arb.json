@@ -1,0 +1,21 @@
+{
+  "symbol": "ARB",
+  "total_supply": 10000000000,
+  "circulating_supply": 3500000000,
+  "top_holders_pct": 0.42,
+  "unlock_schedule": [
+    {"date": "2026-06-16", "amount": 92650000, "percentage": 0.93, "category": "team"},
+    {"date": "2026-09-16", "amount": 92650000, "percentage": 0.93, "category": "team"},
+    {"date": "2026-12-16", "amount": 92650000, "percentage": 0.93, "category": "investors"},
+    {"date": "2027-03-16", "amount": 92650000, "percentage": 0.93, "category": "team"}
+  ],
+  "distribution": {
+    "team": 0.267,
+    "investors": 0.175,
+    "dao_treasury": 0.427,
+    "airdrop": 0.112,
+    "individual_wallets": 0.019
+  },
+  "vesting_start": "2023-03-23",
+  "vesting_end": "2027-03-23"
+}
