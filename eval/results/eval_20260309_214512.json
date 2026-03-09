@@ -1,0 +1,1566 @@
+[
+  {
+    "test_case_id": "dd_01",
+    "query": "Arbitrum 深度分析，是否值得投资",
+    "metrics": [
+      {
+        "name": "faithfulness",
+        "category": "rag",
+        "score": -1.0,
+        "details": {
+          "reason": "RAGAS not available"
+        }
+      },
+      {
+        "name": "answer_relevancy",
+        "category": "rag",
+        "score": -1.0,
+        "details": {
+          "reason": "RAGAS not available"
+        }
+      },
+      {
+        "name": "context_precision",
+        "category": "rag",
+        "score": -1.0,
+        "details": {
+          "reason": "RAGAS not available"
+        }
+      },
+      {
+        "name": "tool_call_accuracy",
+        "category": "agent",
+        "score": 1.0,
+        "details": {
+          "expected": [
+            "get_news",
+            "get_price",
+            "get_token_unlocks"
+          ],
+          "actual": [
+            "get_news",
+            "get_price",
+            "get_token_unlocks"
+          ],
+          "intersection": [
+            "get_news",
+            "get_price",
+            "get_token_unlocks"
+          ],
+          "missing": [],
+          "extra": []
+        }
+      },
+      {
+        "name": "plan_completion",
+        "category": "agent",
+        "score": 1.0,
+        "details": {
+          "expected": [
+            "fundamental_analysis",
+            "market_data",
+            "news_sentiment",
+            "investment_recommendation"
+          ],
+          "present": [
+            "fundamental_analysis",
+            "market_data",
+            "news_sentiment",
+            "investment_recommendation"
+          ],
+          "missing": []
+        }
+      },
+      {
+        "name": "disclaimer_present",
+        "category": "output",
+        "score": 1.0,
+        "details": {
+          "patterns_matched": [
+            "不构成投资建议",
+            "仅供参考",
+            "风险自担",
+            "免责声明"
+          ]
+        }
+      },
+      {
+        "name": "no_absolute_claims",
+        "category": "output",
+        "score": 1.0,
+        "details": {
+          "violations": []
+        }
+      },
+      {
+        "name": "citation_count",
+        "category": "output",
+        "score": 2.0,
+        "details": {
+          "count": 2
+        }
+      },
+      {
+        "name": "schema_validity",
+        "category": "output",
+        "score": 1.0,
+        "details": {
+          "schema": "AnalysisReport",
+          "valid": true
+        }
+      }
+    ],
+    "overall_score": 1.0,
+    "timestamp": "2026-03-09T21:44:35.594805"
+  },
+  {
+    "test_case_id": "dd_02",
+    "query": "Optimism 项目全面分析",
+    "metrics": [
+      {
+        "name": "faithfulness",
+        "category": "rag",
+        "score": -1.0,
+        "details": {
+          "reason": "RAGAS not available"
+        }
+      },
+      {
+        "name": "answer_relevancy",
+        "category": "rag",
+        "score": -1.0,
+        "details": {
+          "reason": "RAGAS not available"
+        }
+      },
+      {
+        "name": "context_precision",
+        "category": "rag",
+        "score": -1.0,
+        "details": {
+          "reason": "RAGAS not available"
+        }
+      },
+      {
+        "name": "tool_call_accuracy",
+        "category": "agent",
+        "score": 1.0,
+        "details": {
+          "expected": [
+            "get_news",
+            "get_price",
+            "get_token_unlocks"
+          ],
+          "actual": [
+            "get_news",
+            "get_price",
+            "get_token_unlocks"
+          ],
+          "intersection": [
+            "get_news",
+            "get_price",
+            "get_token_unlocks"
+          ],
+          "missing": [],
+          "extra": []
+        }
+      },
+      {
+        "name": "plan_completion",
+        "category": "agent",
+        "score": 1.0,
+        "details": {
+          "expected": [
+            "fundamental_analysis",
+            "market_data",
+            "news_sentiment",
+            "investment_recommendation"
+          ],
+          "present": [
+            "fundamental_analysis",
+            "market_data",
+            "news_sentiment",
+            "investment_recommendation"
+          ],
+          "missing": []
+        }
+      },
+      {
+        "name": "disclaimer_present",
+        "category": "output",
+        "score": 1.0,
+        "details": {
+          "patterns_matched": [
+            "不构成投资建议",
+            "仅供参考",
+            "风险自担",
+            "免责声明"
+          ]
+        }
+      },
+      {
+        "name": "no_absolute_claims",
+        "category": "output",
+        "score": 1.0,
+        "details": {
+          "violations": []
+        }
+      },
+      {
+        "name": "citation_count",
+        "category": "output",
+        "score": 2.0,
+        "details": {
+          "count": 2
+        }
+      },
+      {
+        "name": "schema_validity",
+        "category": "output",
+        "score": 1.0,
+        "details": {
+          "schema": "AnalysisReport",
+          "valid": true
+        }
+      }
+    ],
+    "overall_score": 1.0,
+    "timestamp": "2026-03-09T21:44:38.190086"
+  },
+  {
+    "test_case_id": "dd_03",
+    "query": "比特币的投资价值分析",
+    "metrics": [
+      {
+        "name": "faithfulness",
+        "category": "rag",
+        "score": -1.0,
+        "details": {
+          "reason": "RAGAS not available"
+        }
+      },
+      {
+        "name": "answer_relevancy",
+        "category": "rag",
+        "score": -1.0,
+        "details": {
+          "reason": "RAGAS not available"
+        }
+      },
+      {
+        "name": "context_precision",
+        "category": "rag",
+        "score": -1.0,
+        "details": {
+          "reason": "RAGAS not available"
+        }
+      },
+      {
+        "name": "tool_call_accuracy",
+        "category": "agent",
+        "score": 1.0,
+        "details": {
+          "expected": [
+            "get_news",
+            "get_price"
+          ],
+          "actual": [
+            "get_news",
+            "get_price"
+          ],
+          "intersection": [
+            "get_news",
+            "get_price"
+          ],
+          "missing": [],
+          "extra": []
+        }
+      },
+      {
+        "name": "plan_completion",
+        "category": "agent",
+        "score": 1.0,
+        "details": {
+          "expected": [
+            "fundamental_analysis",
+            "market_data",
+            "investment_recommendation"
+          ],
+          "present": [
+            "fundamental_analysis",
+            "market_data",
+            "investment_recommendation"
+          ],
+          "missing": []
+        }
+      },
+      {
+        "name": "disclaimer_present",
+        "category": "output",
+        "score": 1.0,
+        "details": {
+          "patterns_matched": [
+            "不构成投资建议",
+            "仅供参考",
+            "风险自担",
+            "免责声明"
+          ]
+        }
+      },
+      {
+        "name": "no_absolute_claims",
+        "category": "output",
+        "score": 1.0,
+        "details": {
+          "violations": []
+        }
+      },
+      {
+        "name": "citation_count",
+        "category": "output",
+        "score": 2.0,
+        "details": {
+          "count": 2
+        }
+      },
+      {
+        "name": "schema_validity",
+        "category": "output",
+        "score": 1.0,
+        "details": {
+          "schema": "AnalysisReport",
+          "valid": true
+        }
+      }
+    ],
+    "overall_score": 1.0,
+    "timestamp": "2026-03-09T21:44:42.113017"
+  },
+  {
+    "test_case_id": "dd_04",
+    "query": "ARB 代币投资分析，重点关注代币解锁情况",
+    "metrics": [
+      {
+        "name": "faithfulness",
+        "category": "rag",
+        "score": -1.0,
+        "details": {
+          "reason": "RAGAS not available"
+        }
+      },
+      {
+        "name": "answer_relevancy",
+        "category": "rag",
+        "score": -1.0,
+        "details": {
+          "reason": "RAGAS not available"
+        }
+      },
+      {
+        "name": "context_precision",
+        "category": "rag",
+        "score": -1.0,
+        "details": {
+          "reason": "RAGAS not available"
+        }
+      },
+      {
+        "name": "tool_call_accuracy",
+        "category": "agent",
+        "score": 1.0,
+        "details": {
+          "expected": [
+            "get_price",
+            "get_token_unlocks"
+          ],
+          "actual": [
+            "get_price",
+            "get_token_unlocks"
+          ],
+          "intersection": [
+            "get_price",
+            "get_token_unlocks"
+          ],
+          "missing": [],
+          "extra": []
+        }
+      },
+      {
+        "name": "plan_completion",
+        "category": "agent",
+        "score": 1.0,
+        "details": {
+          "expected": [
+            "market_data",
+            "tokenomics",
+            "investment_recommendation"
+          ],
+          "present": [
+            "market_data",
+            "tokenomics",
+            "investment_recommendation"
+          ],
+          "missing": []
+        }
+      },
+      {
+        "name": "disclaimer_present",
+        "category": "output",
+        "score": 1.0,
+        "details": {
+          "patterns_matched": [
+            "不构成投资建议",
+            "仅供参考",
+            "风险自担",
+            "免责声明"
+          ]
+        }
+      },
+      {
+        "name": "no_absolute_claims",
+        "category": "output",
+        "score": 1.0,
+        "details": {
+          "violations": []
+        }
+      },
+      {
+        "name": "citation_count",
+        "category": "output",
+        "score": 2.0,
+        "details": {
+          "count": 2
+        }
+      },
+      {
+        "name": "schema_validity",
+        "category": "output",
+        "score": 1.0,
+        "details": {
+          "schema": "AnalysisReport",
+          "valid": true
+        }
+      }
+    ],
+    "overall_score": 1.0,
+    "timestamp": "2026-03-09T21:44:44.587061"
+  },
+  {
+    "test_case_id": "dd_05",
+    "query": "L2 赛道整体分析和投资机会",
+    "metrics": [
+      {
+        "name": "faithfulness",
+        "category": "rag",
+        "score": -1.0,
+        "details": {
+          "reason": "RAGAS not available"
+        }
+      },
+      {
+        "name": "answer_relevancy",
+        "category": "rag",
+        "score": -1.0,
+        "details": {
+          "reason": "RAGAS not available"
+        }
+      },
+      {
+        "name": "context_precision",
+        "category": "rag",
+        "score": -1.0,
+        "details": {
+          "reason": "RAGAS not available"
+        }
+      },
+      {
+        "name": "tool_call_accuracy",
+        "category": "agent",
+        "score": 1.0,
+        "details": {
+          "expected": [
+            "get_news",
+            "get_price"
+          ],
+          "actual": [
+            "get_news",
+            "get_price"
+          ],
+          "intersection": [
+            "get_news",
+            "get_price"
+          ],
+          "missing": [],
+          "extra": []
+        }
+      },
+      {
+        "name": "plan_completion",
+        "category": "agent",
+        "score": 1.0,
+        "details": {
+          "expected": [
+            "fundamental_analysis"
+          ],
+          "present": [
+            "fundamental_analysis"
+          ],
+          "missing": []
+        }
+      },
+      {
+        "name": "disclaimer_present",
+        "category": "output",
+        "score": 1.0,
+        "details": {
+          "patterns_matched": [
+            "不构成投资建议",
+            "仅供参考",
+            "风险自担",
+            "免责声明"
+          ]
+        }
+      },
+      {
+        "name": "no_absolute_claims",
+        "category": "output",
+        "score": 1.0,
+        "details": {
+          "violations": []
+        }
+      },
+      {
+        "name": "citation_count",
+        "category": "output",
+        "score": 2.0,
+        "details": {
+          "count": 2
+        }
+      },
+      {
+        "name": "schema_validity",
+        "category": "output",
+        "score": 1.0,
+        "details": {
+          "schema": "AnalysisReport",
+          "valid": true
+        }
+      }
+    ],
+    "overall_score": 1.0,
+    "timestamp": "2026-03-09T21:44:47.100946"
+  },
+  {
+    "test_case_id": "cmp_01",
+    "query": "ARB 和 OP 的对比分析，哪个更值得投资",
+    "metrics": [
+      {
+        "name": "faithfulness",
+        "category": "rag",
+        "score": -1.0,
+        "details": {
+          "reason": "RAGAS not available"
+        }
+      },
+      {
+        "name": "answer_relevancy",
+        "category": "rag",
+        "score": -1.0,
+        "details": {
+          "reason": "RAGAS not available"
+        }
+      },
+      {
+        "name": "context_precision",
+        "category": "rag",
+        "score": -1.0,
+        "details": {
+          "reason": "RAGAS not available"
+        }
+      },
+      {
+        "name": "tool_call_accuracy",
+        "category": "agent",
+        "score": 1.0,
+        "details": {
+          "expected": [
+            "get_news",
+            "get_price"
+          ],
+          "actual": [
+            "get_news",
+            "get_price"
+          ],
+          "intersection": [
+            "get_news",
+            "get_price"
+          ],
+          "missing": [],
+          "extra": []
+        }
+      },
+      {
+        "name": "plan_completion",
+        "category": "agent",
+        "score": 1.0,
+        "details": {
+          "expected": [
+            "fundamental_analysis",
+            "market_data",
+            "investment_recommendation"
+          ],
+          "present": [
+            "fundamental_analysis",
+            "market_data",
+            "investment_recommendation"
+          ],
+          "missing": []
+        }
+      },
+      {
+        "name": "disclaimer_present",
+        "category": "output",
+        "score": 1.0,
+        "details": {
+          "patterns_matched": [
+            "不构成投资建议",
+            "仅供参考",
+            "风险自担",
+            "免责声明"
+          ]
+        }
+      },
+      {
+        "name": "no_absolute_claims",
+        "category": "output",
+        "score": 1.0,
+        "details": {
+          "violations": []
+        }
+      },
+      {
+        "name": "citation_count",
+        "category": "output",
+        "score": 2.0,
+        "details": {
+          "count": 2
+        }
+      },
+      {
+        "name": "schema_validity",
+        "category": "output",
+        "score": 1.0,
+        "details": {
+          "schema": "AnalysisReport",
+          "valid": true
+        }
+      }
+    ],
+    "overall_score": 1.0,
+    "timestamp": "2026-03-09T21:44:49.515259"
+  },
+  {
+    "test_case_id": "cmp_02",
+    "query": "Arbitrum、Optimism 和 zkSync 三者的全面比较",
+    "metrics": [
+      {
+        "name": "faithfulness",
+        "category": "rag",
+        "score": -1.0,
+        "details": {
+          "reason": "RAGAS not available"
+        }
+      },
+      {
+        "name": "answer_relevancy",
+        "category": "rag",
+        "score": -1.0,
+        "details": {
+          "reason": "RAGAS not available"
+        }
+      },
+      {
+        "name": "context_precision",
+        "category": "rag",
+        "score": -1.0,
+        "details": {
+          "reason": "RAGAS not available"
+        }
+      },
+      {
+        "name": "tool_call_accuracy",
+        "category": "agent",
+        "score": 1.0,
+        "details": {
+          "expected": [
+            "get_news",
+            "get_price"
+          ],
+          "actual": [
+            "get_news",
+            "get_price"
+          ],
+          "intersection": [
+            "get_news",
+            "get_price"
+          ],
+          "missing": [],
+          "extra": []
+        }
+      },
+      {
+        "name": "plan_completion",
+        "category": "agent",
+        "score": 1.0,
+        "details": {
+          "expected": [
+            "fundamental_analysis",
+            "market_data"
+          ],
+          "present": [
+            "fundamental_analysis",
+            "market_data"
+          ],
+          "missing": []
+        }
+      },
+      {
+        "name": "disclaimer_present",
+        "category": "output",
+        "score": 1.0,
+        "details": {
+          "patterns_matched": [
+            "不构成投资建议",
+            "仅供参考",
+            "风险自担",
+            "免责声明"
+          ]
+        }
+      },
+      {
+        "name": "no_absolute_claims",
+        "category": "output",
+        "score": 1.0,
+        "details": {
+          "violations": []
+        }
+      },
+      {
+        "name": "citation_count",
+        "category": "output",
+        "score": 2.0,
+        "details": {
+          "count": 2
+        }
+      },
+      {
+        "name": "schema_validity",
+        "category": "output",
+        "score": 1.0,
+        "details": {
+          "schema": "AnalysisReport",
+          "valid": true
+        }
+      }
+    ],
+    "overall_score": 1.0,
+    "timestamp": "2026-03-09T21:44:52.229072"
+  },
+  {
+    "test_case_id": "cmp_03",
+    "query": "ZK Rollup 和 Optimistic Rollup 技术路线对比",
+    "metrics": [
+      {
+        "name": "faithfulness",
+        "category": "rag",
+        "score": -1.0,
+        "details": {
+          "reason": "RAGAS not available"
+        }
+      },
+      {
+        "name": "answer_relevancy",
+        "category": "rag",
+        "score": -1.0,
+        "details": {
+          "reason": "RAGAS not available"
+        }
+      },
+      {
+        "name": "context_precision",
+        "category": "rag",
+        "score": -1.0,
+        "details": {
+          "reason": "RAGAS not available"
+        }
+      },
+      {
+        "name": "tool_call_accuracy",
+        "category": "agent",
+        "score": 1.0,
+        "details": {
+          "expected": [
+            "get_news"
+          ],
+          "actual": [
+            "get_news"
+          ],
+          "intersection": [
+            "get_news"
+          ],
+          "missing": [],
+          "extra": []
+        }
+      },
+      {
+        "name": "plan_completion",
+        "category": "agent",
+        "score": 1.0,
+        "details": {
+          "expected": [
+            "fundamental_analysis"
+          ],
+          "present": [
+            "fundamental_analysis"
+          ],
+          "missing": []
+        }
+      },
+      {
+        "name": "disclaimer_present",
+        "category": "output",
+        "score": 1.0,
+        "details": {
+          "patterns_matched": [
+            "不构成投资建议",
+            "仅供参考",
+            "风险自担",
+            "免责声明"
+          ]
+        }
+      },
+      {
+        "name": "no_absolute_claims",
+        "category": "output",
+        "score": 1.0,
+        "details": {
+          "violations": []
+        }
+      },
+      {
+        "name": "citation_count",
+        "category": "output",
+        "score": 2.0,
+        "details": {
+          "count": 2
+        }
+      },
+      {
+        "name": "schema_validity",
+        "category": "output",
+        "score": 1.0,
+        "details": {
+          "schema": "AnalysisReport",
+          "valid": true
+        }
+      }
+    ],
+    "overall_score": 1.0,
+    "timestamp": "2026-03-09T21:44:55.000778"
+  },
+  {
+    "test_case_id": "qa_01",
+    "query": "Arbitrum 的团队背景是什么？",
+    "metrics": [
+      {
+        "name": "faithfulness",
+        "category": "rag",
+        "score": -1.0,
+        "details": {
+          "reason": "RAGAS not available"
+        }
+      },
+      {
+        "name": "answer_relevancy",
+        "category": "rag",
+        "score": -1.0,
+        "details": {
+          "reason": "RAGAS not available"
+        }
+      },
+      {
+        "name": "context_precision",
+        "category": "rag",
+        "score": -1.0,
+        "details": {
+          "reason": "RAGAS not available"
+        }
+      },
+      {
+        "name": "tool_call_accuracy",
+        "category": "agent",
+        "score": 1.0,
+        "details": {
+          "expected": [
+            "rag_search"
+          ],
+          "actual": [
+            "rag_search"
+          ],
+          "intersection": [
+            "rag_search"
+          ],
+          "missing": [],
+          "extra": []
+        }
+      },
+      {
+        "name": "plan_completion",
+        "category": "agent",
+        "score": 1.0,
+        "details": {
+          "expected": [],
+          "present": [],
+          "missing": []
+        }
+      },
+      {
+        "name": "disclaimer_present",
+        "category": "output",
+        "score": 1.0,
+        "details": {
+          "patterns_matched": [
+            "不构成投资建议",
+            "仅供参考",
+            "风险自担",
+            "免责声明"
+          ]
+        }
+      },
+      {
+        "name": "no_absolute_claims",
+        "category": "output",
+        "score": 1.0,
+        "details": {
+          "violations": []
+        }
+      },
+      {
+        "name": "citation_count",
+        "category": "output",
+        "score": 2.0,
+        "details": {
+          "count": 2
+        }
+      },
+      {
+        "name": "schema_validity",
+        "category": "output",
+        "score": 1.0,
+        "details": {
+          "schema": "AnalysisReport",
+          "valid": true
+        }
+      }
+    ],
+    "overall_score": 1.0,
+    "timestamp": "2026-03-09T21:44:57.273228"
+  },
+  {
+    "test_case_id": "qa_02",
+    "query": "ARB 代币什么时候解锁？解锁量是多少？",
+    "metrics": [
+      {
+        "name": "faithfulness",
+        "category": "rag",
+        "score": -1.0,
+        "details": {
+          "reason": "RAGAS not available"
+        }
+      },
+      {
+        "name": "answer_relevancy",
+        "category": "rag",
+        "score": -1.0,
+        "details": {
+          "reason": "RAGAS not available"
+        }
+      },
+      {
+        "name": "context_precision",
+        "category": "rag",
+        "score": -1.0,
+        "details": {
+          "reason": "RAGAS not available"
+        }
+      },
+      {
+        "name": "tool_call_accuracy",
+        "category": "agent",
+        "score": 1.0,
+        "details": {
+          "expected": [
+            "get_token_unlocks"
+          ],
+          "actual": [
+            "get_token_unlocks"
+          ],
+          "intersection": [
+            "get_token_unlocks"
+          ],
+          "missing": [],
+          "extra": []
+        }
+      },
+      {
+        "name": "plan_completion",
+        "category": "agent",
+        "score": 1.0,
+        "details": {
+          "expected": [],
+          "present": [],
+          "missing": []
+        }
+      },
+      {
+        "name": "disclaimer_present",
+        "category": "output",
+        "score": 1.0,
+        "details": {
+          "patterns_matched": [
+            "不构成投资建议",
+            "仅供参考",
+            "风险自担",
+            "免责声明"
+          ]
+        }
+      },
+      {
+        "name": "no_absolute_claims",
+        "category": "output",
+        "score": 1.0,
+        "details": {
+          "violations": []
+        }
+      },
+      {
+        "name": "citation_count",
+        "category": "output",
+        "score": 2.0,
+        "details": {
+          "count": 2
+        }
+      },
+      {
+        "name": "schema_validity",
+        "category": "output",
+        "score": 1.0,
+        "details": {
+          "schema": "AnalysisReport",
+          "valid": true
+        }
+      }
+    ],
+    "overall_score": 1.0,
+    "timestamp": "2026-03-09T21:45:00.091976"
+  },
+  {
+    "test_case_id": "qa_03",
+    "query": "什么是 Optimistic Rollup？它如何保障安全性？",
+    "metrics": [
+      {
+        "name": "faithfulness",
+        "category": "rag",
+        "score": -1.0,
+        "details": {
+          "reason": "RAGAS not available"
+        }
+      },
+      {
+        "name": "answer_relevancy",
+        "category": "rag",
+        "score": -1.0,
+        "details": {
+          "reason": "RAGAS not available"
+        }
+      },
+      {
+        "name": "context_precision",
+        "category": "rag",
+        "score": -1.0,
+        "details": {
+          "reason": "RAGAS not available"
+        }
+      },
+      {
+        "name": "tool_call_accuracy",
+        "category": "agent",
+        "score": 1.0,
+        "details": {
+          "expected": [
+            "rag_search"
+          ],
+          "actual": [
+            "rag_search"
+          ],
+          "intersection": [
+            "rag_search"
+          ],
+          "missing": [],
+          "extra": []
+        }
+      },
+      {
+        "name": "plan_completion",
+        "category": "agent",
+        "score": 1.0,
+        "details": {
+          "expected": [],
+          "present": [],
+          "missing": []
+        }
+      },
+      {
+        "name": "disclaimer_present",
+        "category": "output",
+        "score": 1.0,
+        "details": {
+          "patterns_matched": [
+            "不构成投资建议",
+            "仅供参考",
+            "风险自担",
+            "免责声明"
+          ]
+        }
+      },
+      {
+        "name": "no_absolute_claims",
+        "category": "output",
+        "score": 1.0,
+        "details": {
+          "violations": []
+        }
+      },
+      {
+        "name": "citation_count",
+        "category": "output",
+        "score": 2.0,
+        "details": {
+          "count": 2
+        }
+      },
+      {
+        "name": "schema_validity",
+        "category": "output",
+        "score": 1.0,
+        "details": {
+          "schema": "AnalysisReport",
+          "valid": true
+        }
+      }
+    ],
+    "overall_score": 1.0,
+    "timestamp": "2026-03-09T21:45:02.329018"
+  },
+  {
+    "test_case_id": "qa_04",
+    "query": "投资 Arbitrum 有哪些主要风险因素？",
+    "metrics": [
+      {
+        "name": "faithfulness",
+        "category": "rag",
+        "score": -1.0,
+        "details": {
+          "reason": "RAGAS not available"
+        }
+      },
+      {
+        "name": "answer_relevancy",
+        "category": "rag",
+        "score": -1.0,
+        "details": {
+          "reason": "RAGAS not available"
+        }
+      },
+      {
+        "name": "context_precision",
+        "category": "rag",
+        "score": -1.0,
+        "details": {
+          "reason": "RAGAS not available"
+        }
+      },
+      {
+        "name": "tool_call_accuracy",
+        "category": "agent",
+        "score": 1.0,
+        "details": {
+          "expected": [
+            "get_news",
+            "rag_search"
+          ],
+          "actual": [
+            "get_news",
+            "rag_search"
+          ],
+          "intersection": [
+            "get_news",
+            "rag_search"
+          ],
+          "missing": [],
+          "extra": []
+        }
+      },
+      {
+        "name": "plan_completion",
+        "category": "agent",
+        "score": 1.0,
+        "details": {
+          "expected": [],
+          "present": [],
+          "missing": []
+        }
+      },
+      {
+        "name": "disclaimer_present",
+        "category": "output",
+        "score": 1.0,
+        "details": {
+          "patterns_matched": [
+            "不构成投资建议",
+            "仅供参考",
+            "风险自担",
+            "免责声明"
+          ]
+        }
+      },
+      {
+        "name": "no_absolute_claims",
+        "category": "output",
+        "score": 1.0,
+        "details": {
+          "violations": []
+        }
+      },
+      {
+        "name": "citation_count",
+        "category": "output",
+        "score": 2.0,
+        "details": {
+          "count": 2
+        }
+      },
+      {
+        "name": "schema_validity",
+        "category": "output",
+        "score": 1.0,
+        "details": {
+          "schema": "AnalysisReport",
+          "valid": true
+        }
+      }
+    ],
+    "overall_score": 1.0,
+    "timestamp": "2026-03-09T21:45:05.010935"
+  },
+  {
+    "test_case_id": "nw_01",
+    "query": "ARB 最近有哪些重要新闻？",
+    "metrics": [
+      {
+        "name": "faithfulness",
+        "category": "rag",
+        "score": -1.0,
+        "details": {
+          "reason": "RAGAS not available"
+        }
+      },
+      {
+        "name": "answer_relevancy",
+        "category": "rag",
+        "score": -1.0,
+        "details": {
+          "reason": "RAGAS not available"
+        }
+      },
+      {
+        "name": "context_precision",
+        "category": "rag",
+        "score": -1.0,
+        "details": {
+          "reason": "RAGAS not available"
+        }
+      },
+      {
+        "name": "tool_call_accuracy",
+        "category": "agent",
+        "score": 1.0,
+        "details": {
+          "expected": [
+            "get_news"
+          ],
+          "actual": [
+            "get_news"
+          ],
+          "intersection": [
+            "get_news"
+          ],
+          "missing": [],
+          "extra": []
+        }
+      },
+      {
+        "name": "plan_completion",
+        "category": "agent",
+        "score": 1.0,
+        "details": {
+          "expected": [],
+          "present": [],
+          "missing": []
+        }
+      },
+      {
+        "name": "disclaimer_present",
+        "category": "output",
+        "score": 1.0,
+        "details": {
+          "patterns_matched": [
+            "不构成投资建议",
+            "仅供参考",
+            "风险自担",
+            "免责声明"
+          ]
+        }
+      },
+      {
+        "name": "no_absolute_claims",
+        "category": "output",
+        "score": 1.0,
+        "details": {
+          "violations": []
+        }
+      },
+      {
+        "name": "citation_count",
+        "category": "output",
+        "score": 2.0,
+        "details": {
+          "count": 2
+        }
+      },
+      {
+        "name": "schema_validity",
+        "category": "output",
+        "score": 0.0,
+        "details": {
+          "schema": "AnalysisReport",
+          "valid": false,
+          "error": "1 validation error for AnalysisReport\nworkflow_type\n  Input should be 'deep_dive', 'compare', 'brief' or 'qa' [type=literal_error, input_value='news_watch', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.12/v/literal_error"
+        }
+      }
+    ],
+    "overall_score": 0.8571,
+    "timestamp": "2026-03-09T21:45:07.768506"
+  },
+  {
+    "test_case_id": "nw_02",
+    "query": "当前加密市场整体情绪如何？",
+    "metrics": [
+      {
+        "name": "faithfulness",
+        "category": "rag",
+        "score": -1.0,
+        "details": {
+          "reason": "RAGAS not available"
+        }
+      },
+      {
+        "name": "answer_relevancy",
+        "category": "rag",
+        "score": -1.0,
+        "details": {
+          "reason": "RAGAS not available"
+        }
+      },
+      {
+        "name": "context_precision",
+        "category": "rag",
+        "score": -1.0,
+        "details": {
+          "reason": "RAGAS not available"
+        }
+      },
+      {
+        "name": "tool_call_accuracy",
+        "category": "agent",
+        "score": 1.0,
+        "details": {
+          "expected": [
+            "get_market_overview",
+            "get_news"
+          ],
+          "actual": [
+            "get_market_overview",
+            "get_news"
+          ],
+          "intersection": [
+            "get_market_overview",
+            "get_news"
+          ],
+          "missing": [],
+          "extra": []
+        }
+      },
+      {
+        "name": "plan_completion",
+        "category": "agent",
+        "score": 1.0,
+        "details": {
+          "expected": [],
+          "present": [],
+          "missing": []
+        }
+      },
+      {
+        "name": "disclaimer_present",
+        "category": "output",
+        "score": 1.0,
+        "details": {
+          "patterns_matched": [
+            "不构成投资建议",
+            "仅供参考",
+            "风险自担",
+            "免责声明"
+          ]
+        }
+      },
+      {
+        "name": "no_absolute_claims",
+        "category": "output",
+        "score": 1.0,
+        "details": {
+          "violations": []
+        }
+      },
+      {
+        "name": "citation_count",
+        "category": "output",
+        "score": 2.0,
+        "details": {
+          "count": 2
+        }
+      },
+      {
+        "name": "schema_validity",
+        "category": "output",
+        "score": 0.0,
+        "details": {
+          "schema": "AnalysisReport",
+          "valid": false,
+          "error": "1 validation error for AnalysisReport\nworkflow_type\n  Input should be 'deep_dive', 'compare', 'brief' or 'qa' [type=literal_error, input_value='news_watch', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.12/v/literal_error"
+        }
+      }
+    ],
+    "overall_score": 0.8571,
+    "timestamp": "2026-03-09T21:45:09.895577"
+  },
+  {
+    "test_case_id": "nw_03",
+    "query": "Arbitrum 生态系统最新进展和重要事件",
+    "metrics": [
+      {
+        "name": "faithfulness",
+        "category": "rag",
+        "score": -1.0,
+        "details": {
+          "reason": "RAGAS not available"
+        }
+      },
+      {
+        "name": "answer_relevancy",
+        "category": "rag",
+        "score": -1.0,
+        "details": {
+          "reason": "RAGAS not available"
+        }
+      },
+      {
+        "name": "context_precision",
+        "category": "rag",
+        "score": -1.0,
+        "details": {
+          "reason": "RAGAS not available"
+        }
+      },
+      {
+        "name": "tool_call_accuracy",
+        "category": "agent",
+        "score": 1.0,
+        "details": {
+          "expected": [
+            "get_news"
+          ],
+          "actual": [
+            "get_news"
+          ],
+          "intersection": [
+            "get_news"
+          ],
+          "missing": [],
+          "extra": []
+        }
+      },
+      {
+        "name": "plan_completion",
+        "category": "agent",
+        "score": 1.0,
+        "details": {
+          "expected": [],
+          "present": [],
+          "missing": []
+        }
+      },
+      {
+        "name": "disclaimer_present",
+        "category": "output",
+        "score": 1.0,
+        "details": {
+          "patterns_matched": [
+            "不构成投资建议",
+            "仅供参考",
+            "风险自担",
+            "免责声明"
+          ]
+        }
+      },
+      {
+        "name": "no_absolute_claims",
+        "category": "output",
+        "score": 1.0,
+        "details": {
+          "violations": []
+        }
+      },
+      {
+        "name": "citation_count",
+        "category": "output",
+        "score": 2.0,
+        "details": {
+          "count": 2
+        }
+      },
+      {
+        "name": "schema_validity",
+        "category": "output",
+        "score": 0.0,
+        "details": {
+          "schema": "AnalysisReport",
+          "valid": false,
+          "error": "1 validation error for AnalysisReport\nworkflow_type\n  Input should be 'deep_dive', 'compare', 'brief' or 'qa' [type=literal_error, input_value='news_watch', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.12/v/literal_error"
+        }
+      }
+    ],
+    "overall_score": 0.8571,
+    "timestamp": "2026-03-09T21:45:12.486396"
+  }
+]

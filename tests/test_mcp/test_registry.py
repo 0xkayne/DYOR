@@ -45,7 +45,7 @@ class TestTokenize:
         tokens = _tokenize("price-change 24h!")
         assert "pricechange" in tokens or "price" in tokens
         # The "!" is stripped but "pricechange" depends on split; hyphens keep as separate word
-        # Actually split() on "price-change" gives ["price-change"], then isalpha filter gives "pricechange"
+        # split() on "price-change" → ["price-change"], isalpha → "pricechange"
         # Let's just confirm no punctuation in results
         for token in tokens:
             assert token.isalpha(), f"Non-alpha token found: {token}"
