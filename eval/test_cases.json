@@ -1,13 +1,152 @@
 [
   {
-    "query": "Arbitrum \u6700\u8fd1\u503c\u4e0d\u503c\u5f97\u6295\u8d44\uff1f",
-    "expected_tools_used": ["rag_search", "get_price", "get_news", "get_unlock_schedule"],
-    "expected_output_fields": ["fundamental_analysis", "market_data", "news_sentiment", "tokenomics", "investment_recommendation"],
-    "expected_has_disclaimer": true
+    "id": "dd_01",
+    "workflow_type": "deep_dive",
+    "query": "Arbitrum 深度分析，是否值得投资",
+    "expected_tools": ["get_price", "get_news", "get_token_unlocks"],
+    "expected_fields": ["fundamental_analysis", "market_data", "news_sentiment", "investment_recommendation"],
+    "expected_answer": "Arbitrum 是由 Offchain Labs 开发的以太坊 Layer 2 Optimistic Rollup 解决方案。ARB 是其治理代币，总供应量为 100 亿枚。该项目技术成熟，TVL 位居 L2 赛道前列，主要风险包括代币解锁压力和来自 zkSync、Starknet 等 ZK Rollup 项目的竞争。投资评级为 hold 至 buy，置信度中等，需关注后续代币解锁时间表和生态发展速度。",
+    "expected_projects_count": 1,
+    "expected_has_citations": true
   },
   {
-    "query": "\u5bf9\u6bd4 Arbitrum \u548c Optimism",
-    "expected_workflow": "compare",
-    "expected_projects_analyzed": 2
+    "id": "dd_02",
+    "workflow_type": "deep_dive",
+    "query": "Optimism 项目全面分析",
+    "expected_tools": ["get_price", "get_news", "get_token_unlocks"],
+    "expected_fields": ["fundamental_analysis", "market_data", "news_sentiment", "investment_recommendation"],
+    "expected_answer": "Optimism 是以太坊 Layer 2 Optimistic Rollup 项目，由 OP Labs 开发。其治理代币 OP 采用双层治理架构（Token House 和 Citizens' House）。Optimism 通过 Superchain 战略与 Base、Mode 等链共享技术栈，生态扩张明显。主要风险为代币解锁压力和竞争加剧。",
+    "expected_projects_count": 1,
+    "expected_has_citations": true
+  },
+  {
+    "id": "dd_03",
+    "workflow_type": "deep_dive",
+    "query": "比特币的投资价值分析",
+    "expected_tools": ["get_price", "get_news"],
+    "expected_fields": ["fundamental_analysis", "market_data", "investment_recommendation"],
+    "expected_answer": "比特币（BTC）是第一个去中心化加密货币，总供应量上限为 2100 万枚，具有稀缺性。作为数字黄金，比特币被机构投资者和散户广泛持有。价值驱动因素包括减半事件、ETF 审批进展、宏观避险需求。主要风险包括监管不确定性和高度波动性。",
+    "expected_projects_count": 1,
+    "expected_has_citations": false
+  },
+  {
+    "id": "dd_04",
+    "workflow_type": "deep_dive",
+    "query": "ARB 代币投资分析，重点关注代币解锁情况",
+    "expected_tools": ["get_price", "get_token_unlocks"],
+    "expected_fields": ["market_data", "tokenomics", "investment_recommendation"],
+    "expected_answer": "ARB 代币总供应量 100 亿枚，初始流通量约 12.75 亿枚（12.75%）。2024 年 3 月起团队和投资者代币开始按月线性解锁，每月约 9200 万枚，持续约 4 年。解锁压力是短期内价格的主要压制因素。当前价格需结合解锁日历和市场承接能力综合判断。",
+    "expected_projects_count": 1,
+    "expected_has_citations": true
+  },
+  {
+    "id": "dd_05",
+    "workflow_type": "deep_dive",
+    "query": "L2 赛道整体分析和投资机会",
+    "expected_tools": ["get_price", "get_news"],
+    "expected_fields": ["fundamental_analysis"],
+    "expected_answer": "以太坊 Layer 2 赛道主要分为 Optimistic Rollup（Arbitrum、Optimism）和 ZK Rollup（zkSync、Starknet、Scroll）两大技术路线。Optimistic Rollup 发展较为成熟，TVL 更高；ZK Rollup 技术更先进但工程复杂度高。整体赛道受益于以太坊生态扩张，长期逻辑清晰，短期面临代币竞争和流动性分散压力。",
+    "expected_projects_count": 1,
+    "expected_has_citations": false
+  },
+  {
+    "id": "cmp_01",
+    "workflow_type": "compare",
+    "query": "ARB 和 OP 的对比分析，哪个更值得投资",
+    "expected_tools": ["get_price", "get_news"],
+    "expected_fields": ["fundamental_analysis", "market_data", "investment_recommendation"],
+    "expected_answer": "Arbitrum（ARB）和 Optimism（OP）均采用 Optimistic Rollup 技术。Arbitrum 在 TVL、协议收入和生态 dApp 数量上通常领先；Optimism 在治理设计（双层治理）和 Superchain 多链战略上更具创新性。二者代币经济模型相似，均面临解锁压力。选择取决于投资者对生态深度（ARB）还是多链扩张（OP）的偏好。",
+    "expected_projects_count": 2,
+    "expected_has_citations": true
+  },
+  {
+    "id": "cmp_02",
+    "workflow_type": "compare",
+    "query": "Arbitrum、Optimism 和 zkSync 三者的全面比较",
+    "expected_tools": ["get_price", "get_news"],
+    "expected_fields": ["fundamental_analysis", "market_data"],
+    "expected_answer": "三者均是以太坊 L2 解决方案但技术路线不同：Arbitrum 和 Optimism 使用 Optimistic Rollup，zkSync 使用 ZK Rollup（基于 zk-SNARK）。zkSync 理论上安全性更高、最终确认更快，无需 7 天挑战期；但 Optimistic Rollup 目前生态更成熟。zkSync 代币 ZK 于 2024 年推出，早期生态激励力度较大。",
+    "expected_projects_count": 3,
+    "expected_has_citations": true
+  },
+  {
+    "id": "cmp_03",
+    "workflow_type": "compare",
+    "query": "ZK Rollup 和 Optimistic Rollup 技术路线对比",
+    "expected_tools": ["get_news"],
+    "expected_fields": ["fundamental_analysis"],
+    "expected_answer": "ZK Rollup 使用零知识证明（zk-SNARK 或 zk-STARK）验证交易批次，无需信任假设，最终确认时间短（几分钟），但电路设计复杂、对 EVM 兼容性挑战大。Optimistic Rollup 假设交易默认有效，通过 7 天挑战期和欺诈证明保障安全性，EVM 兼容性好，开发门槛低。当前 Optimistic Rollup 生态更成熟，ZK Rollup 是长期技术演进方向。",
+    "expected_projects_count": 2,
+    "expected_has_citations": false
+  },
+  {
+    "id": "qa_01",
+    "workflow_type": "qa",
+    "query": "Arbitrum 的团队背景是什么？",
+    "expected_tools": ["rag_search"],
+    "expected_fields": [],
+    "expected_answer": "Arbitrum 由 Offchain Labs 开发，核心创始人包括：Ed Felten（普林斯顿大学计算机科学教授、曾任美国白宫科技政策办公室副主任）、Steven Goldfeder（密码学博士，曾是 Felten 的博士生）和 Harry Kalodner（计算机科学研究员）。团队具备深厚的学术背景，尤其在密码学、分布式系统和区块链安全领域。",
+    "expected_projects_count": 1,
+    "expected_has_citations": true
+  },
+  {
+    "id": "qa_02",
+    "workflow_type": "qa",
+    "query": "ARB 代币什么时候解锁？解锁量是多少？",
+    "expected_tools": ["get_token_unlocks"],
+    "expected_fields": [],
+    "expected_answer": "ARB 代币首次大规模解锁于 2024 年 3 月 16 日，届时团队、顾问和早期投资者持有的代币开始按月线性释放，每月释放约 9200 万枚 ARB，占总供应量约 0.92%，解锁期持续约 4 年至 2028 年。投资者应在解锁日期前后关注价格波动和市场承接情况。",
+    "expected_projects_count": 1,
+    "expected_has_citations": true
+  },
+  {
+    "id": "qa_03",
+    "workflow_type": "qa",
+    "query": "什么是 Optimistic Rollup？它如何保障安全性？",
+    "expected_tools": ["rag_search"],
+    "expected_fields": [],
+    "expected_answer": "Optimistic Rollup 是以太坊 Layer 2 扩容方案，其核心思想是「乐观假设」：默认所有交易有效，将交易批量提交至以太坊主链，不立即验证。安全性通过欺诈证明（Fraud Proof）机制保障：在 7 天挑战期内，任何人若发现无效交易可提交欺诈证明，触发链上验证。如挑战成功，错误的状态转换会被回滚。7 天挑战期导致从 L2 提款到 L1 需等待约 7 天。",
+    "expected_projects_count": 1,
+    "expected_has_citations": false
+  },
+  {
+    "id": "qa_04",
+    "workflow_type": "qa",
+    "query": "投资 Arbitrum 有哪些主要风险因素？",
+    "expected_tools": ["rag_search", "get_news"],
+    "expected_fields": [],
+    "expected_answer": "投资 Arbitrum 的主要风险包括：1）代币解锁压力：团队和投资者代币自 2024 年 3 月起持续解锁，供应增加对价格有压制作用；2）竞争风险：zkSync、Starknet 等 ZK Rollup 项目技术优势明显，长期可能抢占市场份额；3）智能合约安全风险：尽管经过审计，仍存在未知漏洞可能；4）监管风险：全球加密监管政策不确定性；5）以太坊依赖：若以太坊生态活跃度下降，L2 项目均受影响。",
+    "expected_projects_count": 1,
+    "expected_has_citations": true
+  },
+  {
+    "id": "nw_01",
+    "workflow_type": "news_watch",
+    "query": "ARB 最近有哪些重要新闻？",
+    "expected_tools": ["get_news"],
+    "expected_fields": [],
+    "expected_answer": "ARB 近期新闻涵盖生态系统发展动态、与主要 DeFi 协议的合作进展、Arbitrum DAO 治理提案投票结果，以及代币价格走势相关报道。具体内容以实时数据为准。",
+    "expected_projects_count": 1,
+    "expected_has_citations": true
+  },
+  {
+    "id": "nw_02",
+    "workflow_type": "news_watch",
+    "query": "当前加密市场整体情绪如何？",
+    "expected_tools": ["get_market_overview", "get_news"],
+    "expected_fields": [],
+    "expected_answer": "加密市场情绪需结合多维度指标判断，包括比特币恐慌贪婪指数、总市值变动、主要代币涨跌幅分布、链上资金流入流出等。当前情绪以实时数据为准，建议关注宏观流动性环境和 BTC 主导率变化。",
+    "expected_projects_count": 1,
+    "expected_has_citations": false
+  },
+  {
+    "id": "nw_03",
+    "workflow_type": "news_watch",
+    "query": "Arbitrum 生态系统最新进展和重要事件",
+    "expected_tools": ["get_news"],
+    "expected_fields": [],
+    "expected_answer": "Arbitrum 生态近期重要事件包括：Arbitrum DAO 治理活动（如 LTIPP 激励计划讨论）、主要 DeFi 协议（GMX、Camelot、Pendle 等）的新功能上线、以及开发者工具和基础设施更新。具体进展以实时新闻数据为准。",
+    "expected_projects_count": 1,
+    "expected_has_citations": true
   }
 ]

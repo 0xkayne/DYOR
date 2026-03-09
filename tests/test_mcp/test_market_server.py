@@ -1,6 +1,6 @@
 """Tests for the CoinGecko market data MCP server."""
 
-from datetime import datetime, timezone
+from datetime import datetime
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import httpx

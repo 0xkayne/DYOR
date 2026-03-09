@@ -1,0 +1,53 @@
+{
+  "count": 5,
+  "results": [
+    {
+      "id": 1,
+      "title": "Arbitrum TVL Reaches New All-Time High",
+      "url": "https://example.com/news/1",
+      "source": {"title": "CryptoNews", "domain": "cryptonews.com"},
+      "published_at": "2024-01-15T10:30:00Z",
+      "currencies": [{"code": "ARB", "title": "Arbitrum"}],
+      "kind": "news"
+    },
+    {
+      "id": 2,
+      "title": "ARB Token Unlock Schedule Analysis",
+      "url": "https://example.com/news/2",
+      "source": {"title": "TokenInsight", "domain": "tokeninsight.com"},
+      "published_at": "2024-01-14T08:00:00Z",
+      "currencies": [{"code": "ARB", "title": "Arbitrum"}],
+      "kind": "news"
+    },
+    {
+      "id": 3,
+      "title": "Arbitrum Orbit Chains Growing Rapidly",
+      "url": "https://example.com/news/3",
+      "source": {"title": "TheBlock", "domain": "theblock.co"},
+      "published_at": "2024-01-13T14:20:00Z",
+      "currencies": [{"code": "ARB", "title": "Arbitrum"}],
+      "kind": "news"
+    },
+    {
+      "id": 4,
+      "title": "Layer 2 Competition Heats Up: Arbitrum vs Optimism",
+      "url": "https://example.com/news/4",
+      "source": {"title": "CoinDesk", "domain": "coindesk.com"},
+      "published_at": "2024-01-12T16:45:00Z",
+      "currencies": [
+        {"code": "ARB", "title": "Arbitrum"},
+        {"code": "OP", "title": "Optimism"}
+      ],
+      "kind": "news"
+    },
+    {
+      "id": 5,
+      "title": "Arbitrum DAO Passes Governance Proposal",
+      "url": "https://example.com/news/5",
+      "source": {"title": "Decrypt", "domain": "decrypt.co"},
+      "published_at": "2024-01-11T09:15:00Z",
+      "currencies": [{"code": "ARB", "title": "Arbitrum"}],
+      "kind": "news"
+    }
+  ]
+}

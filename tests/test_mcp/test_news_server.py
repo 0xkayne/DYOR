@@ -1,6 +1,6 @@
 """Tests for the CryptoPanic news aggregation MCP server."""
 
-from datetime import datetime, timezone
+from datetime import datetime
 from unittest.mock import AsyncMock, patch
 
 import pytest
@@ -12,7 +12,6 @@ from src.mcp_servers.news_server import (
     get_latest_news,
     search_news,
 )
-
 
 SAMPLE_RESULTS = [
     {
@@ -117,7 +116,7 @@ class TestGetLatestNews:
             "src.mcp_servers.news_server._cp_request",
             new_callable=AsyncMock,
             return_value=CP_POSTS_RESPONSE,
-        ) as mock_cp:
+        ):
             result = await get_latest_news(filter="invalid_filter")
 
         assert result["filter"] == "all"
