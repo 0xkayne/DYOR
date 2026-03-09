@@ -1,0 +1,32 @@
+---
+config:
+  flowchart:
+    curve: linear
+---
+graph TD;
+	__start__([<p>__start__</p>]):::first
+	router(router)
+	planner(planner)
+	rag_agent(rag_agent)
+	market_agent(market_agent)
+	news_agent(news_agent)
+	tokenomics_agent(tokenomics_agent)
+	analyst(analyst)
+	critic(critic)
+	__end__([<p>__end__</p>]):::last
+	__start__ --> router;
+	analyst --> critic;
+	critic -.-> analyst;
+	market_agent --> analyst;
+	news_agent --> analyst;
+	planner -.-> market_agent;
+	planner -.-> news_agent;
+	planner -.-> rag_agent;
+	planner -.-> tokenomics_agent;
+	rag_agent --> analyst;
+	router --> planner;
+	tokenomics_agent --> analyst;
+	critic -.-> __end__;
+	classDef default fill:#f2f0ff,line-height:1.2
+	classDef first fill-opacity:0
+	classDef last fill:#bfb6fc
