@@ -95,6 +95,94 @@ def mock_settings(monkeypatch):
 
 
 @pytest.fixture
+def mock_llm_factory():
+    """Create a configurable mock ChatAnthropic that returns specified JSON content."""
+    from unittest.mock import AsyncMock, MagicMock
+
+    def _create(response_content: str) -> MagicMock:
+        mock_llm = MagicMock()
+        mock_response = MagicMock()
+        mock_response.content = response_content
+        mock_llm.ainvoke = AsyncMock(return_value=mock_response)
+        return mock_llm
+
+    return _create
+
+
+@pytest.fixture
+def initial_state() -> dict:
+    """Standard AgentState initial dict with all fields initialized."""
+    return {
+        "messages": [],
+        "user_query": "分析 Arbitrum 是否值得投资",
+        "workflow_type": "",
+        "target_entities": [],
+        "execution_plan": [],
+        "rag_result": None,
+        "market_data": None,
+        "news_data": None,
+        "tokenomics_data": None,
+        "analysis_report": None,
+        "critic_feedback": None,
+        "critic_approved": False,
+        "revision_count": 0,
+    }
+
+
+@pytest.fixture
+def valid_report() -> dict:
+    """A minimal compliant report dict that passes guardrails validation."""
+    return {
+        "project_name": "Arbitrum",
+        "analysis_date": "2026-03-09T00:00:00",
+        "workflow_type": "deep_dive",
+        "fundamental_analysis": {
+            "summary": "Arbitrum is a leading L2 solution.",
+            "team_score": 8.0,
+            "product_score": 7.5,
+            "track_score": 8.0,
+            "tokenomics_score": 6.5,
+            "sources": ["arbitrum_report.md"],
+        },
+        "market_data": None,
+        "news_sentiment": None,
+        "tokenomics": None,
+        "investment_recommendation": {
+            "rating": "buy",
+            "confidence": 0.65,
+            "key_reasons": ["Strong ecosystem", "Active development"],
+            "risk_factors": ["Token unlock pressure", "Competition"],
+            "disclaimer": "This is not financial advice. Always do your own research.",
+        },
+    }
+
+
+@pytest.fixture
+def async_client():
+    """httpx.AsyncClient with ASGITransport for API testing."""
+    import httpx
+    from httpx import ASGITransport
+
+    from api.main import app
+
+    async def _create():
+        transport = ASGITransport(app=app)
+        return httpx.AsyncClient(transport=transport, base_url="http://test")
+
+    return _create
+
+
+@pytest.fixture
+def mock_agent_settings(monkeypatch):
+    """Override settings for testing with safe defaults."""
+    from src.config import settings
+    monkeypatch.setattr(settings, "anthropic_api_key", "test-key")
+    monkeypatch.setattr(settings, "agent_timeout", 5)
+    monkeypatch.setattr(settings, "max_revision_count", 2)
+    return settings
+
+
+@pytest.fixture
 def sample_documents() -> list[Document]:
     """Create 5 sample Document objects with metadata."""
     return [
