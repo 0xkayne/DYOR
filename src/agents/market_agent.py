@@ -64,8 +64,12 @@ _COIN_ID_MAP: dict[str, str] = {
 }
 
 
-def _resolve_coin_id(entity: str) -> str:
+async def _resolve_coin_id(entity: str) -> str:
     """Resolve a project name or ticker to a CoinGecko coin ID.
+
+    Checks the static mapping first (fast path, no API call), then
+    falls back to the dynamic CoinGecko coins/list cache, and finally
+    returns the input as-is if nothing matches.
 
     Args:
         entity: Project name or ticker symbol.
@@ -74,7 +78,17 @@ def _resolve_coin_id(entity: str) -> str:
         CoinGecko coin ID string.
     """
     normalized = entity.lower().strip()
-    return _COIN_ID_MAP.get(normalized, normalized)
+    # Fast path: static mapping
+    if normalized in _COIN_ID_MAP:
+        return _COIN_ID_MAP[normalized]
+    # Dynamic resolution via cached coins/list
+    from src.mcp_servers.market_server import resolve_coin_id
+
+    resolved = await resolve_coin_id(normalized)
+    if resolved:
+        return resolved
+    # Final fallback: use input as-is
+    return normalized
 
 
 class MarketAgent:
@@ -160,7 +174,7 @@ class MarketAgent:
         Returns:
             Dict with price and technical_indicators data.
         """
-        coin_id = _resolve_coin_id(entity)
+        coin_id = await _resolve_coin_id(entity)
 
         # Fetch price and indicators concurrently
         price_task = get_price(coin_id)

@@ -126,8 +126,8 @@ class NewsAgent:
         ticker = _resolve_ticker(entity)
 
         # Fetch news and sentiment concurrently
-        news_task = search_news(keyword=ticker, count=10)
-        sentiment_task = analyze_sentiment(coin_id=ticker)
+        news_task = search_news(currencies=ticker, count=10)
+        sentiment_task = analyze_sentiment(currencies=ticker)
 
         news_data, sentiment_data = await asyncio.gather(
             news_task, sentiment_task, return_exceptions=True

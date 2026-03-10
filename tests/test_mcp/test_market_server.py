@@ -1,5 +1,6 @@
 """Tests for the CoinGecko market data MCP server."""
 
+import time
 from datetime import datetime
 from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -8,10 +9,13 @@ import pytest
 
 from src.mcp_servers.market_server import (
     _cg_request,
+    _resolve_cg_auth,
     calculate_technical_indicators,
+    get_coin_list,
     get_market_overview,
     get_price,
     get_price_history,
+    resolve_coin_id,
 )
 
 
@@ -340,3 +344,196 @@ class TestCalculateTechnicalIndicators:
             result = await calculate_technical_indicators("bitcoin")
 
         assert "error" in result
+
+
+class TestResolveCgAuth:
+    def test_demo_key(self):
+        with patch("src.mcp_servers.market_server.settings") as mock_settings:
+            mock_settings.coingecko_pro_api_key = ""
+            mock_settings.coingecko_api_key = "CG-demo123"
+            mock_settings.coingecko_base_url = "https://api.coingecko.com/api/v3"
+
+            base_url, headers = _resolve_cg_auth()
+
+        assert base_url == "https://api.coingecko.com/api/v3"
+        assert headers == {"x-cg-demo-api-key": "CG-demo123"}
+
+    def test_pro_key(self):
+        with patch("src.mcp_servers.market_server.settings") as mock_settings:
+            mock_settings.coingecko_pro_api_key = "CG-pro456"
+            mock_settings.coingecko_api_key = "CG-demo123"
+
+            base_url, headers = _resolve_cg_auth()
+
+        assert base_url == "https://pro-api.coingecko.com/api/v3"
+        assert headers == {"x-cg-pro-api-key": "CG-pro456"}
+
+    def test_no_key(self):
+        with patch("src.mcp_servers.market_server.settings") as mock_settings:
+            mock_settings.coingecko_pro_api_key = ""
+            mock_settings.coingecko_api_key = ""
+            mock_settings.coingecko_base_url = "https://api.coingecko.com/api/v3"
+
+            base_url, headers = _resolve_cg_auth()
+
+        assert base_url == "https://api.coingecko.com/api/v3"
+        assert headers == {}
+
+
+class TestGetPriceNullGuard:
+    @pytest.mark.asyncio
+    async def test_null_market_data(self):
+        resp = {"id": "somecoin", "market_data": None}
+        with patch(
+            "src.mcp_servers.market_server._cg_request",
+            new_callable=AsyncMock,
+            return_value=resp,
+        ):
+            result = await get_price("somecoin")
+
+        assert result["current_price"] == 0.0
+        assert result["market_cap"] == 0.0
+        assert result["volume_24h"] == 0.0
+
+    @pytest.mark.asyncio
+    async def test_null_nested_fields(self):
+        resp = {
+            "id": "somecoin",
+            "market_data": {
+                "current_price": None,
+                "price_change_percentage_24h": None,
+                "price_change_percentage_7d": None,
+                "market_cap": None,
+                "total_volume": None,
+            },
+        }
+        with patch(
+            "src.mcp_servers.market_server._cg_request",
+            new_callable=AsyncMock,
+            return_value=resp,
+        ):
+            result = await get_price("somecoin")
+
+        assert result["current_price"] == 0.0
+        assert result["price_change_24h"] == 0.0
+        assert result["price_change_7d"] == 0.0
+        assert result["market_cap"] == 0.0
+        assert result["volume_24h"] == 0.0
+
+    @pytest.mark.asyncio
+    async def test_missing_market_data_key(self):
+        resp = {"id": "somecoin"}
+        with patch(
+            "src.mcp_servers.market_server._cg_request",
+            new_callable=AsyncMock,
+            return_value=resp,
+        ):
+            result = await get_price("somecoin")
+
+        assert result["current_price"] == 0.0
+
+
+class TestCoinListCache:
+    @pytest.mark.asyncio
+    async def test_caching_avoids_second_request(self):
+        import src.mcp_servers.market_server as ms
+
+        # Reset cache
+        ms._coin_list_cache = None
+        ms._coin_list_ts = 0.0
+
+        coin_list = [
+            {"id": "bitcoin", "symbol": "btc", "name": "Bitcoin"},
+            {"id": "ethereum", "symbol": "eth", "name": "Ethereum"},
+        ]
+        with patch(
+            "src.mcp_servers.market_server._cg_request",
+            new_callable=AsyncMock,
+            return_value=coin_list,
+        ) as mock_req:
+            result1 = await get_coin_list()
+            result2 = await get_coin_list()
+
+        assert len(result1) == 2
+        assert result2 is result1  # Same cached object
+        assert mock_req.call_count == 1  # Only one API call
+
+        # Cleanup
+        ms._coin_list_cache = None
+        ms._coin_list_ts = 0.0
+
+    @pytest.mark.asyncio
+    async def test_cache_expires_after_ttl(self):
+        import src.mcp_servers.market_server as ms
+
+        # Set stale cache
+        ms._coin_list_cache = [{"id": "old", "symbol": "old", "name": "Old"}]
+        ms._coin_list_ts = time.time() - 90000  # Older than 24h
+
+        fresh_list = [{"id": "bitcoin", "symbol": "btc", "name": "Bitcoin"}]
+        with patch(
+            "src.mcp_servers.market_server._cg_request",
+            new_callable=AsyncMock,
+            return_value=fresh_list,
+        ):
+            result = await get_coin_list()
+
+        assert result[0]["id"] == "bitcoin"
+
+        # Cleanup
+        ms._coin_list_cache = None
+        ms._coin_list_ts = 0.0
+
+
+class TestResolveCoinId:
+    @pytest.mark.asyncio
+    async def test_resolve_by_symbol(self):
+        import src.mcp_servers.market_server as ms
+
+        ms._coin_list_cache = [
+            {"id": "bitcoin", "symbol": "btc", "name": "Bitcoin"},
+            {"id": "ethereum", "symbol": "eth", "name": "Ethereum"},
+        ]
+        ms._coin_list_ts = time.time()
+
+        result = await resolve_coin_id("BTC")
+        assert result == "bitcoin"
+
+        result = await resolve_coin_id("eth")
+        assert result == "ethereum"
+
+        # Cleanup
+        ms._coin_list_cache = None
+        ms._coin_list_ts = 0.0
+
+    @pytest.mark.asyncio
+    async def test_resolve_by_id(self):
+        import src.mcp_servers.market_server as ms
+
+        ms._coin_list_cache = [
+            {"id": "bitcoin", "symbol": "btc", "name": "Bitcoin"},
+        ]
+        ms._coin_list_ts = time.time()
+
+        result = await resolve_coin_id("bitcoin")
+        assert result == "bitcoin"
+
+        # Cleanup
+        ms._coin_list_cache = None
+        ms._coin_list_ts = 0.0
+
+    @pytest.mark.asyncio
+    async def test_resolve_returns_none_for_unknown(self):
+        import src.mcp_servers.market_server as ms
+
+        ms._coin_list_cache = [
+            {"id": "bitcoin", "symbol": "btc", "name": "Bitcoin"},
+        ]
+        ms._coin_list_ts = time.time()
+
+        result = await resolve_coin_id("nonexistent_xyz")
+        assert result is None
+
+        # Cleanup
+        ms._coin_list_cache = None
+        ms._coin_list_ts = 0.0

@@ -11,12 +11,19 @@ from src.agents.market_agent import MarketAgent, _market_agent, market_agent_nod
 
 
 class TestCoinIdResolve:
-    def test_known_mapping(self):
-        assert _resolve_coin_id("ARB") == "arbitrum"
-        assert _resolve_coin_id("Bitcoin") == "bitcoin"
+    @pytest.mark.asyncio
+    async def test_known_mapping(self):
+        assert await _resolve_coin_id("ARB") == "arbitrum"
+        assert await _resolve_coin_id("Bitcoin") == "bitcoin"
 
-    def test_unknown_passthrough(self):
-        assert _resolve_coin_id("unknowntoken") == "unknowntoken"
+    @pytest.mark.asyncio
+    async def test_unknown_passthrough(self):
+        with patch(
+            "src.mcp_servers.market_server.resolve_coin_id",
+            new_callable=AsyncMock,
+            return_value=None,
+        ):
+            assert await _resolve_coin_id("unknowntoken") == "unknowntoken"
 
 
 class TestMarketAgentInvoke:

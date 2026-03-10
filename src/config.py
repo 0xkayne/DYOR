@@ -30,9 +30,10 @@ class Settings(BaseSettings):
 
     # MCP / External APIs
     coingecko_api_key: str = ""
+    coingecko_pro_api_key: str = ""
     coingecko_base_url: str = "https://api.coingecko.com/api/v3"
     cryptopanic_api_key: str = ""
-    cryptopanic_base_url: str = "https://cryptopanic.com/api/v1"
+    cryptopanic_base_url: str = "https://cryptopanic.com/api/developer/v2"
 
     # API Server
     api_host: str = "0.0.0.0"

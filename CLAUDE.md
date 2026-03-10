@@ -125,3 +125,9 @@ uv run python eval/run_eval.py          # 运行评估
 uv run ruff check src/
 uv run ruff format src/
 ```
+
+## 集成外部 API 的强制步骤：
+1. 读取 docs/{service}.api-profile.md
+2. 不得使用训练记忆中关于该 API 的知识（包括参数名、端点路径、认证方式）
+3. 如果 Profile 中标注 ⚠️ 待验证，先写集成代码，在调用处加 TODO 注释，
+   集成完成后运行 docs/{service}-smoke-test.sh 验证

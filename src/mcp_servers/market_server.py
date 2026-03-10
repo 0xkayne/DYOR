@@ -1,6 +1,7 @@
 """CoinGecko market data MCP server for price, history, and technical indicators."""
 
 import asyncio
+import time
 from datetime import datetime, timezone
 from math import sqrt
 
@@ -15,6 +16,32 @@ logger = structlog.get_logger(__name__)
 mcp = FastMCP("crypto-market")
 
 _http_client: httpx.AsyncClient | None = None
+
+# Coin list cache for symbol → id resolution (24h TTL per API Profile §10)
+_coin_list_cache: list[dict] | None = None
+_coin_list_ts: float = 0.0
+_COIN_LIST_TTL = 86400  # 24 hours
+
+
+def _resolve_cg_auth() -> tuple[str, dict[str, str]]:
+    """Select base URL and auth header based on API key type.
+
+    Pro Key takes priority. Per API Profile §2:
+    - Demo Key → api.coingecko.com + x-cg-demo-api-key header
+    - Pro Key → pro-api.coingecko.com + x-cg-pro-api-key header
+    - No Key → config default base URL, no header
+    """
+    if settings.coingecko_pro_api_key:
+        return (
+            "https://pro-api.coingecko.com/api/v3",
+            {"x-cg-pro-api-key": settings.coingecko_pro_api_key},
+        )
+    if settings.coingecko_api_key:
+        return (
+            "https://api.coingecko.com/api/v3",
+            {"x-cg-demo-api-key": settings.coingecko_api_key},
+        )
+    return (settings.coingecko_base_url, {})
 
 
 async def _get_client() -> httpx.AsyncClient:
@@ -43,10 +70,8 @@ async def _cg_request(path: str, params: dict | None = None) -> dict:
         Parsed JSON response as a dict, or {"error": "<message>"} on failure.
     """
     client = await _get_client()
-    url = settings.coingecko_base_url + path
-    headers: dict[str, str] = {}
-    if settings.coingecko_api_key:
-        headers["x-cg-demo-api-key"] = settings.coingecko_api_key
+    base_url, headers = _resolve_cg_auth()
+    url = base_url + path
 
     last_exc: Exception | None = None
     for attempt in range(3):
@@ -111,13 +136,13 @@ async def get_price(coin_id: str, currency: str = "usd") -> dict:
         if "error" in data:
             return {"error": data["error"], "data_source": "coingecko"}
 
-        md = data["market_data"]
+        md = data.get("market_data") or {}
         market = MarketData(
-            current_price=md["current_price"].get(currency, 0.0),
+            current_price=(md.get("current_price") or {}).get(currency, 0.0),
             price_change_24h=md.get("price_change_percentage_24h") or 0.0,
             price_change_7d=md.get("price_change_percentage_7d") or 0.0,
-            market_cap=md["market_cap"].get(currency, 0.0),
-            volume_24h=md["total_volume"].get(currency, 0.0),
+            market_cap=(md.get("market_cap") or {}).get(currency, 0.0),
+            volume_24h=(md.get("total_volume") or {}).get(currency, 0.0),
             technical_indicators={},
         )
         return market.model_dump() | {
@@ -299,6 +324,63 @@ async def calculate_technical_indicators(coin_id: str, days: int = 30) -> dict:
     except Exception as exc:
         logger.error("calculate_technical_indicators_error", coin_id=coin_id, error=str(exc))
         return {"error": str(exc), "data_source": "coingecko"}
+
+
+async def get_coin_list() -> list[dict]:
+    """Fetch and cache the full CoinGecko coin list (24h TTL).
+
+    Returns:
+        List of dicts with id, symbol, and name fields.
+    """
+    global _coin_list_cache, _coin_list_ts
+    now = time.time()
+    if _coin_list_cache is not None and (now - _coin_list_ts) < _COIN_LIST_TTL:
+        return _coin_list_cache
+    data = await _cg_request("/coins/list")
+    if isinstance(data, list):
+        _coin_list_cache = data
+        _coin_list_ts = now
+        return data
+    return _coin_list_cache or []
+
+
+async def resolve_coin_id(query: str) -> str | None:
+    """Resolve a symbol or name to a CoinGecko coin ID via cached coins/list.
+
+    Args:
+        query: Coin symbol (e.g. "BTC") or name to look up.
+
+    Returns:
+        CoinGecko coin ID string, or None if not found.
+    """
+    normalized = query.lower().strip()
+    coins = await get_coin_list()
+    # Exact match on id
+    for c in coins:
+        if c["id"] == normalized:
+            return c["id"]
+    # Exact match on symbol (first match = highest market cap rank in list order)
+    for c in coins:
+        if c.get("symbol", "").lower() == normalized:
+            return c["id"]
+    return None
+
+
+@mcp.tool()
+async def resolve_coin_id_tool(query: str) -> dict:
+    """Resolve a coin symbol or name to a CoinGecko coin ID.
+
+    Uses a cached copy of the full CoinGecko coin list (refreshed every 24h)
+    to map symbols like "BTC" or names like "bitcoin" to the canonical coin ID.
+
+    Args:
+        query: Coin symbol (e.g. "BTC", "ETH") or name (e.g. "bitcoin").
+
+    Returns:
+        Dict with coin_id (str or null) and query echo.
+    """
+    coin_id = await resolve_coin_id(query)
+    return {"coin_id": coin_id, "query": query}
 
 
 if __name__ == "__main__":

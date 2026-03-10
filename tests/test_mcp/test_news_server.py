@@ -1,11 +1,13 @@
 """Tests for the CryptoPanic news aggregation MCP server."""
 
 from datetime import datetime
-from unittest.mock import AsyncMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
+import httpx
 import pytest
 
 from src.mcp_servers.news_server import (
+    _VALID_REGIONS,
     _map_sentiment,
     _parse_news_items,
     analyze_sentiment,
@@ -159,16 +161,16 @@ class TestGetLatestNews:
 
 class TestSearchNews:
     @pytest.mark.asyncio
-    async def test_returns_news_for_keyword(self):
+    async def test_returns_news_for_currencies(self):
         with patch(
             "src.mcp_servers.news_server._cp_request",
             new_callable=AsyncMock,
             return_value=CP_POSTS_RESPONSE,
         ):
-            result = await search_news(keyword="BTC", count=3)
+            result = await search_news(currencies="BTC", count=3)
 
         assert "news" in result
-        assert result["keyword"] == "BTC"
+        assert result["currencies"] == "BTC"
         assert result["data_source"] == "cryptopanic"
 
     @pytest.mark.asyncio
@@ -178,7 +180,7 @@ class TestSearchNews:
             new_callable=AsyncMock,
             return_value={"error": "not configured"},
         ):
-            result = await search_news(keyword="ETH")
+            result = await search_news(currencies="ETH")
 
         assert "error" in result
 
@@ -189,7 +191,7 @@ class TestSearchNews:
             new_callable=AsyncMock,
             return_value=CP_POSTS_RESPONSE,
         ):
-            result = await search_news(keyword="BTC", count=2)
+            result = await search_news(currencies="BTC", count=2)
 
         assert result["count"] == 2
 
@@ -200,10 +202,23 @@ class TestSearchNews:
             new_callable=AsyncMock,
             side_effect=Exception("network failure"),
         ):
-            result = await search_news(keyword="BTC")
+            result = await search_news(currencies="BTC")
 
         assert "error" in result
         assert result["data_source"] == "cryptopanic"
+
+    @pytest.mark.asyncio
+    async def test_search_news_with_filter(self):
+        with patch(
+            "src.mcp_servers.news_server._cp_request",
+            new_callable=AsyncMock,
+            return_value=CP_POSTS_RESPONSE,
+        ) as mock_req:
+            result = await search_news(currencies="BTC", filter="hot")
+
+        call_params = mock_req.call_args[0][1]
+        assert call_params["filter"] == "hot"
+        assert result["currencies"] == "BTC"
 
 
 class TestAnalyzeSentiment:
@@ -317,3 +332,111 @@ class TestAnalyzeSentiment:
 
         assert "error" in result
         assert result["data_source"] == "cryptopanic"
+
+
+class TestRetryOn403:
+    @pytest.mark.asyncio
+    async def test_retries_on_403(self):
+        """Verify that HTTP 403 triggers retry logic like 429."""
+        mock_403 = MagicMock()
+        mock_403.status_code = 403
+
+        mock_ok = MagicMock()
+        mock_ok.status_code = 200
+        mock_ok.json.return_value = CP_POSTS_RESPONSE
+
+        mock_client = AsyncMock()
+        mock_client.get = AsyncMock(side_effect=[mock_403, mock_ok])
+
+        with (
+            patch(
+                "src.mcp_servers.news_server._get_client",
+                new_callable=AsyncMock,
+                return_value=mock_client,
+            ),
+            patch("src.mcp_servers.news_server.settings") as mock_settings,
+            patch("asyncio.sleep", new_callable=AsyncMock),
+        ):
+            mock_settings.cryptopanic_api_key = "test-key"
+            mock_settings.cryptopanic_base_url = "https://cryptopanic.com/api/developer/v2"
+            from src.mcp_servers.news_server import _cp_request
+            result = await _cp_request("/posts/", {"kind": "news"})
+
+        assert "results" in result
+        assert mock_client.get.call_count == 2
+
+
+class TestFilterAllDefault:
+    """Verify that filter='all' is a valid default that doesn't trigger warnings."""
+
+    @pytest.mark.asyncio
+    async def test_filter_all_no_warning(self):
+        with patch(
+            "src.mcp_servers.news_server._cp_request",
+            new_callable=AsyncMock,
+            return_value=CP_POSTS_RESPONSE,
+        ) as mock_req, patch(
+            "src.mcp_servers.news_server.logger",
+        ) as mock_logger:
+            result = await get_latest_news(filter="all", count=3)
+
+        assert result["filter"] == "all"
+        mock_logger.warning.assert_not_called()
+        # "all" should not be sent as a filter param to the API
+        call_params = mock_req.call_args[0][1]
+        assert "filter" not in call_params
+
+    @pytest.mark.asyncio
+    async def test_new_regions_accepted(self):
+        """Verify newly added regions (tr, ar, zh, ja, ko) are valid."""
+        for region in ("tr", "ar", "zh", "ja", "ko"):
+            assert region in _VALID_REGIONS
+
+        with patch(
+            "src.mcp_servers.news_server._cp_request",
+            new_callable=AsyncMock,
+            return_value=CP_POSTS_RESPONSE,
+        ) as mock_req:
+            result = await get_latest_news(regions="zh,ja", count=2)
+
+        call_params = mock_req.call_args[0][1]
+        assert call_params["regions"] == "zh,ja"
+
+
+class TestRegionsParam:
+    @pytest.mark.asyncio
+    async def test_regions_param_passed(self):
+        with patch(
+            "src.mcp_servers.news_server._cp_request",
+            new_callable=AsyncMock,
+            return_value=CP_POSTS_RESPONSE,
+        ) as mock_req:
+            result = await get_latest_news(regions="en", count=3)
+
+        call_params = mock_req.call_args[0][1]
+        assert call_params["regions"] == "en"
+        assert result["regions"] == "en"
+
+    @pytest.mark.asyncio
+    async def test_invalid_regions_ignored(self):
+        with patch(
+            "src.mcp_servers.news_server._cp_request",
+            new_callable=AsyncMock,
+            return_value=CP_POSTS_RESPONSE,
+        ) as mock_req:
+            result = await get_latest_news(regions="xx", count=3)
+
+        call_params = mock_req.call_args[0][1]
+        assert "regions" not in call_params
+
+    @pytest.mark.asyncio
+    async def test_mixed_regions_filters_invalid(self):
+        with patch(
+            "src.mcp_servers.news_server._cp_request",
+            new_callable=AsyncMock,
+            return_value=CP_POSTS_RESPONSE,
+        ) as mock_req:
+            result = await get_latest_news(regions="en,xx,de", count=3)
+
+        call_params = mock_req.call_args[0][1]
+        assert call_params["regions"] == "en,de"

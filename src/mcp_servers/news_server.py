@@ -15,7 +15,8 @@ mcp = FastMCP("crypto-news")
 
 _http_client: httpx.AsyncClient | None = None
 
-_VALID_FILTERS = {"all", "rising", "hot", "bullish", "bearish", "important", "saved", "lol"}
+_VALID_FILTERS = {"rising", "hot", "bullish", "bearish", "important", "saved", "lol"}
+_VALID_REGIONS = {"en", "de", "nl", "es", "fr", "it", "pt", "ru", "tr", "ar", "zh", "ja", "ko"}
 
 # Warn at startup if API key is missing
 if not settings.cryptopanic_api_key:
@@ -64,7 +65,7 @@ async def _cp_request(path: str, params: dict | None = None) -> dict:
     for attempt in range(3):
         try:
             response = await client.get(url, params=merged_params)
-            if response.status_code == 429 or response.status_code >= 500:
+            if response.status_code in (403, 429) or response.status_code >= 500:
                 wait = 2 ** attempt
                 logger.warning(
                     "cp_request_retry",
@@ -147,7 +148,7 @@ def _parse_news_items(results: list[dict], limit: int) -> list[NewsItem]:
 
 
 @mcp.tool()
-async def get_latest_news(filter: str = "all", count: int = 10) -> dict:
+async def get_latest_news(filter: str = "all", count: int = 10, regions: str = "") -> dict:
     """Get latest cryptocurrency news articles with sentiment analysis.
 
     Fetches recent news posts from CryptoPanic filtered by type. Each
@@ -158,18 +159,33 @@ async def get_latest_news(filter: str = "all", count: int = 10) -> dict:
             "hot", "bullish", "bearish", "important", "saved", "lol".
             Invalid values are silently reset to "all".
         count: Maximum number of articles to return (default 10).
+        regions: Comma-separated language region codes to filter news.
+            Valid values: "en", "de", "nl", "es", "fr", "it", "pt", "ru".
+            Empty string means no region filter (default).
 
     Returns:
         Dict containing news (list of NewsItem dicts), count, filter used,
-        data_source, and fetched_at. Returns {"error": ...} if the API key
-        is missing or the request fails.
+        regions, data_source, and fetched_at. Returns {"error": ...} if the
+        API key is missing or the request fails.
     """
     try:
-        if filter not in _VALID_FILTERS:
+        if filter != "all" and filter not in _VALID_FILTERS:
             logger.warning("invalid_news_filter", filter=filter, fallback="all")
             filter = "all"
 
-        data = await _cp_request("/posts/", {"filter": filter, "kind": "news"})
+        params: dict = {"kind": "news"}
+        if filter != "all":
+            params["filter"] = filter
+        if regions:
+            validated = ",".join(
+                r for r in regions.split(",") if r.strip() in _VALID_REGIONS
+            )
+            if validated:
+                params["regions"] = validated
+            if validated != regions:
+                logger.warning("invalid_regions_ignored", raw=regions, validated=validated)
+
+        data = await _cp_request("/posts/", params)
         if "error" in data:
             return {"error": data["error"], "data_source": "cryptopanic"}
 
@@ -180,6 +196,7 @@ async def get_latest_news(filter: str = "all", count: int = 10) -> dict:
             "news": [item.model_dump() for item in items],
             "count": len(items),
             "filter": filter,
+            "regions": regions,
             "data_source": "cryptopanic",
             "fetched_at": datetime.now(timezone.utc).isoformat(),
         }
@@ -189,24 +206,43 @@ async def get_latest_news(filter: str = "all", count: int = 10) -> dict:
 
 
 @mcp.tool()
-async def search_news(keyword: str, count: int = 10) -> dict:
-    """Search cryptocurrency news by keyword or coin name.
+async def search_news(currencies: str, count: int = 10, filter: str = "all", regions: str = "") -> dict:
+    """Search cryptocurrency news by coin ticker codes.
 
-    Queries CryptoPanic for news articles mentioning the specified keyword
-    or coin ticker. Useful for narrowing results to a specific project.
+    Queries CryptoPanic for news articles mentioning the specified currency
+    tickers. Only uppercase ticker codes are accepted (e.g. "BTC", "ETH",
+    "BTC,ETH"). Arbitrary keyword search requires an Enterprise plan.
 
     Args:
-        keyword: Search keyword or coin ticker/name (e.g. "bitcoin", "ETH",
-            "defi"). CryptoPanic uses this as a currencies filter.
+        currencies: Comma-separated uppercase ticker codes (e.g. "BTC",
+            "BTC,ETH"). Passed directly to CryptoPanic's currencies param.
         count: Maximum number of articles to return (default 10).
+        filter: Post filter type. Valid values: "all" (default), "rising",
+            "hot", "bullish", "bearish", "important", "saved", "lol".
+        regions: Comma-separated language region codes (e.g. "en", "de").
 
     Returns:
-        Dict containing news (list of NewsItem dicts), count, keyword used,
+        Dict containing news (list of NewsItem dicts), count, currencies,
         data_source, and fetched_at. Returns {"error": ...} if the API key
         is missing or the request fails.
     """
     try:
-        data = await _cp_request("/posts/", {"currencies": keyword, "kind": "news"})
+        params: dict = {"currencies": currencies, "kind": "news"}
+        if filter != "all":
+            if filter in _VALID_FILTERS:
+                params["filter"] = filter
+            else:
+                logger.warning("invalid_news_filter", filter=filter, fallback="all")
+        if regions:
+            validated = ",".join(
+                r for r in regions.split(",") if r.strip() in _VALID_REGIONS
+            )
+            if validated:
+                params["regions"] = validated
+            if validated != regions:
+                logger.warning("invalid_regions_ignored", raw=regions, validated=validated)
+
+        data = await _cp_request("/posts/", params)
         if "error" in data:
             return {"error": data["error"], "data_source": "cryptopanic"}
 
@@ -216,17 +252,17 @@ async def search_news(keyword: str, count: int = 10) -> dict:
         return {
             "news": [item.model_dump() for item in items],
             "count": len(items),
-            "keyword": keyword,
+            "currencies": currencies,
             "data_source": "cryptopanic",
             "fetched_at": datetime.now(timezone.utc).isoformat(),
         }
     except Exception as exc:
-        logger.error("search_news_error", keyword=keyword, error=str(exc))
+        logger.error("search_news_error", currencies=currencies, error=str(exc))
         return {"error": str(exc), "data_source": "cryptopanic"}
 
 
 @mcp.tool()
-async def analyze_sentiment(coin_id: str) -> dict:
+async def analyze_sentiment(currencies: str) -> dict:
     """Analyze overall news sentiment for a specific cryptocurrency.
 
     Fetches recent news for the given coin and aggregates sentiment across
@@ -234,8 +270,8 @@ async def analyze_sentiment(coin_id: str) -> dict:
     sentiment label and a normalised score in [-1, 1].
 
     Args:
-        coin_id: Coin identifier or ticker (e.g. "BTC", "ETH", "bitcoin").
-            Passed directly to CryptoPanic as a currencies filter.
+        currencies: Uppercase ticker code (e.g. "BTC", "ETH"). Passed
+            directly to CryptoPanic as a currencies filter.
 
     Returns:
         Dict containing overall_sentiment ("positive"/"neutral"/"negative"),
@@ -244,7 +280,7 @@ async def analyze_sentiment(coin_id: str) -> dict:
         if the API key is missing or the request fails.
     """
     try:
-        data = await _cp_request("/posts/", {"currencies": coin_id, "kind": "news"})
+        data = await _cp_request("/posts/", {"currencies": currencies, "kind": "news"})
         if "error" in data:
             return {"error": data["error"], "data_source": "cryptopanic"}
 
@@ -278,7 +314,7 @@ async def analyze_sentiment(coin_id: str) -> dict:
             "fetched_at": datetime.now(timezone.utc).isoformat(),
         }
     except Exception as exc:
-        logger.error("analyze_sentiment_error", coin_id=coin_id, error=str(exc))
+        logger.error("analyze_sentiment_error", currencies=currencies, error=str(exc))
         return {"error": str(exc), "data_source": "cryptopanic"}
 
 
