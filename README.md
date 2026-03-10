@@ -19,14 +19,11 @@ Python 3.11+ · uv · LangGraph · LangChain · ChromaDB · BGE-M3 · FastMCP ·
 
 ## 环境要求
 
-- [Conda](https://docs.anaconda.com/miniconda/)（Miniconda 或 Anaconda）
-- Python 3.11 或 3.12（通过 conda 创建）
-- [uv](https://github.com/astral-sh/uv) 包管理器（在 conda 环境内安装）
+- Python 3.11 或 3.12
+- [uv](https://github.com/astral-sh/uv) 包管理器
 - [Git](https://git-scm.com/)
 
 ## 快速开始
-
-以下步骤假设你已安装 conda。提供 Linux/macOS 和 Windows 两套命令，内容相同，仅终端语法略有差异。
 
 ### 1. Clone 仓库
 
@@ -35,28 +32,45 @@ git clone https://github.com/your-org/DYOR.git
 cd DYOR
 ```
 
-### 2. 创建并激活 conda 环境
+### 2. 安装 uv
+
+如果尚未安装 uv，按以下方式安装：
 
 ```bash
-conda create -n dyor python=3.12 -y
-conda activate dyor
+# Linux / macOS
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Windows (PowerShell)
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
 ```
 
-### 3. 安装 uv 包管理器
+安装完成后重启终端，确认 `uv --version` 能正常输出。
+
+### 3. 创建虚拟环境并安装依赖
 
 ```bash
-pip install uv
+uv venv .venv --python 3.12
 ```
 
-### 4. 安装项目依赖
+激活虚拟环境：
+
+```bash
+# Linux / macOS
+source .venv/bin/activate
+
+# Windows (PowerShell)
+.venv\Scripts\activate
+```
+
+安装项目依赖：
 
 ```bash
 uv sync
 ```
 
-> 首次运行会自动创建 `.venv` 并安装所有依赖，耗时约 2-3 分钟。
+> `uv sync` 会自动读取 `pyproject.toml` 并安装所有依赖，首次运行耗时约 2-3 分钟。
 
-### 5. 配置环境变量
+### 4. 配置环境变量
 
 ```bash
 cp .env.example .env
@@ -77,7 +91,7 @@ cp .env.example .env
 | `AGENT_TIMEOUT` | 否 | `60` | Agent 超时秒数 |
 | `KNOWLEDGE_GRAPH_PATH` | 否 | `./data/knowledge_graph/graph.graphml` | 知识图谱存储路径 |
 
-### 6. 索引投研文档
+### 5. 索引投研文档
 
 ```bash
 uv run python -m src.rag.ingest
@@ -85,7 +99,7 @@ uv run python -m src.rag.ingest
 
 > 首次运行会自动下载 BGE-M3 Embedding 模型（约 2GB），请耐心等待。
 
-### 7. 启动后端 API
+### 6. 启动后端 API
 
 ```bash
 uv run uvicorn api.main:app --reload
@@ -93,10 +107,11 @@ uv run uvicorn api.main:app --reload
 
 验证：访问 http://localhost:8000/health ，应返回 `{"status": "healthy", ...}`。
 
-### 8. 启动前端（新终端窗口）
+### 7. 启动前端（新终端窗口）
 
 ```bash
-conda activate dyor
+# 新终端中先激活虚拟环境
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
 uv run streamlit run ui/app.py
 ```
 
@@ -175,13 +190,12 @@ START → Router → Planner → [RAG, Market, News, Tokenomics] → Analyst →
 
 | 问题 | 解决方案 |
 |------|---------|
-| `uv: command not found` | 确认已 `pip install uv`，或重新打开终端使 PATH 生效 |
+| `uv: command not found` | 重新打开终端使 PATH 生效，或检查安装脚本是否执行成功 |
 | `/health` 返回 `workflow_ready: false` | 检查 `.env` 中 `ANTHROPIC_API_KEY` 是否正确填写 |
 | 首次启动下载 Embedding 模型很慢 | BGE-M3 模型约 2GB，国内网络可能需要设置代理 |
 | Windows 上出现 ONNX Runtime 警告 | 正常现象，不影响功能，可忽略 |
 | Market / News 数据返回为空 | 检查对应的 `COINGECKO_API_KEY` / `CRYPTOPANIC_API_KEY` 是否已配置 |
-| `conda activate dyor` 无反应 | 运行 `conda init` 后重启终端 |
-| `uv sync` 报错找不到 Python | 确认已在 conda 环境中（提示符应显示 `(dyor)`） |
+| `uv sync` 报错找不到 Python | 确认已激活 `.venv` 虚拟环境，或使用 `uv venv .venv --python 3.12` 重新创建 |
 
 ## 测试
 
