@@ -19,23 +19,50 @@ Python 3.11+ · uv · LangGraph · LangChain · ChromaDB · BGE-M3 · FastMCP ·
 
 ## 环境要求
 
-- Python >= 3.11, < 3.13
-- [uv](https://github.com/astral-sh/uv) 包管理器
+- [Conda](https://docs.anaconda.com/miniconda/)（Miniconda 或 Anaconda）
+- Python 3.11 或 3.12（通过 conda 创建）
+- [uv](https://github.com/astral-sh/uv) 包管理器（在 conda 环境内安装）
+- [Git](https://git-scm.com/)
+
+## 快速开始
+
+以下步骤假设你已安装 conda。提供 Linux/macOS 和 Windows 两套命令，内容相同，仅终端语法略有差异。
+
+### 1. Clone 仓库
 
 ```bash
-# 安装 uv
-curl -LsSf https://astral.sh/uv/install.sh | sh
-# 或
+git clone https://github.com/your-org/DYOR.git
+cd DYOR
+```
+
+### 2. 创建并激活 conda 环境
+
+```bash
+conda create -n dyor python=3.12 -y
+conda activate dyor
+```
+
+### 3. 安装 uv 包管理器
+
+```bash
 pip install uv
 ```
 
-## 环境配置
+### 4. 安装项目依赖
 
-复制 `.env.example` 并填入 API 密钥：
+```bash
+uv sync
+```
+
+> 首次运行会自动创建 `.venv` 并安装所有依赖，耗时约 2-3 分钟。
+
+### 5. 配置环境变量
 
 ```bash
 cp .env.example .env
 ```
+
+编辑 `.env`，至少填入 `ANTHROPIC_API_KEY`（必需），其他 key 可选：
 
 | 变量 | 必需 | 默认值 | 说明 |
 |------|:----:|--------|------|
@@ -47,29 +74,43 @@ cp .env.example .env
 | `API_HOST` | 否 | `0.0.0.0` | API 服务地址 |
 | `API_PORT` | 否 | `8000` | API 服务端口 |
 | `MAX_REVISION_COUNT` | 否 | `2` | Critic 最大修订次数 |
-| `AGENT_TIMEOUT` | 否 | `30` | Agent 超时秒数 |
+| `AGENT_TIMEOUT` | 否 | `60` | Agent 超时秒数 |
 | `KNOWLEDGE_GRAPH_PATH` | 否 | `./data/knowledge_graph/graph.graphml` | 知识图谱存储路径 |
 
-## 快速开始
+### 6. 索引投研文档
 
 ```bash
-# 克隆并安装依赖
-git clone <repo-url> && cd DYOR
-uv sync
-
-# 配置环境变量
-cp .env.example .env
-# 编辑 .env，填入 ANTHROPIC_API_KEY
-
-# 索引投研文档到 ChromaDB
 uv run python -m src.rag.ingest
+```
 
-# 启动 API 服务 (http://localhost:8000)
+> 首次运行会自动下载 BGE-M3 Embedding 模型（约 2GB），请耐心等待。
+
+### 7. 启动后端 API
+
+```bash
 uv run uvicorn api.main:app --reload
+```
 
-# 启动前端 (http://localhost:8501)
+验证：访问 http://localhost:8000/health ，应返回 `{"status": "healthy", ...}`。
+
+### 8. 启动前端（新终端窗口）
+
+```bash
+conda activate dyor
 uv run streamlit run ui/app.py
 ```
+
+访问 http://localhost:8501 即可使用 Web 界面。
+
+## API 密钥获取
+
+| 密钥 | 获取地址 | 说明 |
+|------|---------|------|
+| **Anthropic API Key**（必需） | https://console.anthropic.com/ | 注册后在 API Keys 页面创建 |
+| **CoinGecko API Key**（推荐） | https://www.coingecko.com/en/api | 免费 Demo plan 即可，注册后获取 |
+| **CryptoPanic API Key**（可选） | https://cryptopanic.com/developers/api/ | 注册后在开发者页面获取 |
+
+未配置 CoinGecko / CryptoPanic key 时，对应的市场行情和新闻功能会降级但不影响核心分析流程。
 
 ## 使用方式
 
@@ -129,6 +170,18 @@ START → Router → Planner → [RAG, Market, News, Tokenomics] → Analyst →
 - **RAG / Market / News / Tokenomics** — 并行执行数据采集
 - **Analyst** — 汇总所有数据，生成结构化分析报告
 - **Critic** — 审查报告质量，不达标则触发修订（最多 2 次）
+
+## 常见问题
+
+| 问题 | 解决方案 |
+|------|---------|
+| `uv: command not found` | 确认已 `pip install uv`，或重新打开终端使 PATH 生效 |
+| `/health` 返回 `workflow_ready: false` | 检查 `.env` 中 `ANTHROPIC_API_KEY` 是否正确填写 |
+| 首次启动下载 Embedding 模型很慢 | BGE-M3 模型约 2GB，国内网络可能需要设置代理 |
+| Windows 上出现 ONNX Runtime 警告 | 正常现象，不影响功能，可忽略 |
+| Market / News 数据返回为空 | 检查对应的 `COINGECKO_API_KEY` / `CRYPTOPANIC_API_KEY` 是否已配置 |
+| `conda activate dyor` 无反应 | 运行 `conda init` 后重启终端 |
+| `uv sync` 报错找不到 Python | 确认已在 conda 环境中（提示符应显示 `(dyor)`） |
 
 ## 测试
 

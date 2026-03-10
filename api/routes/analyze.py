@@ -84,7 +84,7 @@ async def run_analysis(body: AnalysisRequest, request: Request) -> AnalysisRespo
     semaphore: asyncio.Semaphore = request.app.state.semaphore
     config = {"configurable": {"thread_id": body.thread_id}}
     input_state = {
-        "query": body.query,
+        "user_query": body.query,
         "workflow_type": body.workflow_type,
     }
 
@@ -111,13 +111,21 @@ async def run_analysis(body: AnalysisRequest, request: Request) -> AnalysisRespo
             detail=f"Analysis timed out after {settings.agent_timeout}s.",
         ) from exc
 
-    # The workflow is expected to return an AnalysisReport-compatible dict or object.
+    # The workflow returns the full AgentState dict; extract the analysis_report.
     if isinstance(raw_result, AnalysisReport):
         report = raw_result
     elif isinstance(raw_result, dict):
-        # Workflows may nest the report inside a "report" key.
-        report_data = raw_result.get("report", raw_result)
-        report = AnalysisReport(**report_data) if isinstance(report_data, dict) else report_data
+        report_data = (
+            raw_result.get("analysis_report")
+            or raw_result.get("report")
+            or raw_result
+        )
+        if isinstance(report_data, AnalysisReport):
+            report = report_data
+        elif isinstance(report_data, dict):
+            report = AnalysisReport(**report_data)
+        else:
+            raise HTTPException(status_code=500, detail="Unexpected report format in workflow result.")
     else:
         logger.error("unexpected workflow result type", type=type(raw_result).__name__)
         raise HTTPException(status_code=500, detail="Unexpected workflow result format.")

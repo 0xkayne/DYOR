@@ -41,7 +41,7 @@ class Settings(BaseSettings):
 
     # Agent
     max_revision_count: int = 2
-    agent_timeout: int = 30
+    agent_timeout: int = 60
 
     # Knowledge Graph
     knowledge_graph_path: str = "./data/knowledge_graph/graph.graphml"

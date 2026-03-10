@@ -235,7 +235,7 @@ async def ws_chat(websocket: WebSocket) -> None:
         return
 
     input_state = {
-        "query": chat_msg.query,
+        "user_query": chat_msg.query,
         "workflow_type": chat_msg.workflow_type,
     }
     config = _build_config(thread_id)
@@ -341,7 +341,7 @@ async def sse_chat(
             yield {"data": err.model_dump_json()}
             return
 
-        input_state = {"query": query, "workflow_type": workflow_type}
+        input_state = {"user_query": query, "workflow_type": workflow_type}
 
         async for msg in stream_workflow(workflow, input_state, config, semaphore):
             # Respect client disconnect.
