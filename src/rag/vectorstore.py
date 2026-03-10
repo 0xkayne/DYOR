@@ -6,8 +6,12 @@ metadata filtering support.
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
 from typing import Any
+
+# Disable ChromaDB anonymous telemetry before importing
+os.environ.setdefault("ANONYMIZED_TELEMETRY", "False")
 
 import chromadb
 import structlog

@@ -122,10 +122,10 @@ def langgraph_event_to_messages(event: dict[str, Any]) -> list[StreamMessage]:
         # Only emit a result for top-level chain completions (no parent run).
         parent_ids: list[str] = event.get("parent_ids", [])
         if not parent_ids:
+            import json
+
             output = event.get("data", {}).get("output", "")
             if isinstance(output, dict):
-                import json
-
                 content = json.dumps(output, ensure_ascii=False, default=str)
             else:
                 content = str(output) if output else f"{name} completed"
@@ -164,11 +164,14 @@ async def stream_workflow(
         StreamMessage objects in chronological order.
     """
     async with semaphore:
+        result_emitted = False
         try:
             async for event in workflow_app.astream_events(
                 input_state, config=config, version="v2"
             ):
                 for msg in langgraph_event_to_messages(event):
+                    if msg.type == "result":
+                        result_emitted = True
                     yield msg
         except asyncio.CancelledError:
             logger.info("stream_workflow cancelled", config=config)
@@ -181,3 +184,30 @@ async def stream_workflow(
                 content=str(exc),
                 timestamp=_now_iso(),
             )
+            return
+
+        # Fallback: if no result event was emitted from astream_events,
+        # retrieve the final state via the checkpointer and emit the report.
+        if not result_emitted:
+            try:
+                import json
+
+                state = await workflow_app.aget_state(config)
+                state_values = state.values if hasattr(state, "values") else {}
+                report = state_values.get("analysis_report")
+                if report:
+                    content = json.dumps(report, ensure_ascii=False, default=str)
+                else:
+                    content = json.dumps(state_values, ensure_ascii=False, default=str)
+                logger.info("stream_workflow emitting fallback result from final state")
+                yield StreamMessage(
+                    type="result",
+                    agent="analyst",
+                    content=content,
+                    timestamp=_now_iso(),
+                )
+            except Exception as state_exc:  # noqa: BLE001
+                logger.warning(
+                    "stream_workflow failed to retrieve final state",
+                    error=str(state_exc),
+                )

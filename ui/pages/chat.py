@@ -123,6 +123,23 @@ def _stream_response(query: str) -> None:
                             if new_report is not None:
                                 report = new_report
 
+                    # Process any remaining data in buffer after stream ends
+                    # (last SSE event may lack trailing \n\n)
+                    remaining = buffer.strip()
+                    if remaining:
+                        _process_sse_event(
+                            remaining,
+                            text_placeholder,
+                            status_container,
+                            active_statuses,
+                        )
+                        accumulated_text = st.session_state.get(
+                            "_stream_accumulated", accumulated_text
+                        )
+                        new_report = st.session_state.pop("_stream_report", None)
+                        if new_report is not None:
+                            report = new_report
+
             # Finalize display — remove cursor
             if accumulated_text:
                 text_placeholder.markdown(accumulated_text)
@@ -227,16 +244,25 @@ def _process_sse_event(
             st.session_state["_stream_accumulated"] = accumulated_text
 
         elif event_type == "result":
+            report_data = None
             if isinstance(content, dict):
-                st.session_state["_stream_report"] = content
+                report_data = content
             elif isinstance(content, str) and content.strip():
                 try:
-                    parsed = json.loads(content)
-                    st.session_state["_stream_report"] = parsed
+                    report_data = json.loads(content)
                 except json.JSONDecodeError:
                     # Treat as final text, not a report
                     accumulated_text += content
                     st.session_state["_stream_accumulated"] = accumulated_text
+
+            if isinstance(report_data, dict):
+                # If the result is the full workflow state, extract analysis_report
+                if "analysis_report" in report_data and isinstance(
+                    report_data["analysis_report"], dict
+                ):
+                    st.session_state["_stream_report"] = report_data["analysis_report"]
+                else:
+                    st.session_state["_stream_report"] = report_data
 
         elif event_type == "error":
             error_msg = content if isinstance(content, str) else str(content)
