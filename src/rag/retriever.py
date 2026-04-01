@@ -111,8 +111,8 @@ class AgenticRetriever:
     def ranker(self) -> Ranker:
         """Lazily load the flashrank reranker model."""
         if self._ranker is None:
-            logger.info("loading_reranker", model="ms-marco-MiniLM-L-12-v2")
-            self._ranker = Ranker(model_name="ms-marco-MiniLM-L-12-v2", cache_dir="/tmp/flashrank")
+            logger.info("loading_reranker", model="BAAI/bge-reranker-base")
+            self._ranker = Ranker(model_name="BAAI/bge-reranker-base", cache_dir="/tmp/flashrank")
             logger.info("reranker_loaded")
         return self._ranker
 
