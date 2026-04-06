@@ -49,26 +49,10 @@ powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | ie
 ### 3. 创建虚拟环境并安装依赖
 
 ```bash
-uv venv .venv --python 3.12
-```
-
-激活虚拟环境：
-
-```bash
-# Linux / macOS
-source .venv/bin/activate
-
-# Windows (PowerShell)
-.venv\Scripts\activate
-```
-
-安装项目依赖：
-
-```bash
 uv sync
 ```
 
-> `uv sync` 会自动读取 `pyproject.toml` 并安装所有依赖，首次运行耗时约 2-3 分钟。
+> `uv sync` 会自动创建虚拟环境（`.venv/`）并根据 `uv.lock` 安装所有依赖，首次运行耗时约 2-3 分钟。后续使用 `uv sync` 即可同步 lock 文件中的最新依赖。
 
 ### 4. 配置环境变量
 
@@ -110,8 +94,6 @@ uv run uvicorn api.main:app --reload
 ### 7. 启动前端（新终端窗口）
 
 ```bash
-# 新终端中先激活虚拟环境
-source .venv/bin/activate   # Windows: .venv\Scripts\activate
 uv run streamlit run ui/app.py
 ```
 
@@ -195,7 +177,7 @@ START → Router → Planner → [RAG, Market, News, Tokenomics] → Analyst →
 | 首次启动下载 Embedding 模型很慢 | BGE-M3 模型约 2GB，国内网络可能需要设置代理 |
 | Windows 上出现 ONNX Runtime 警告 | 正常现象，不影响功能，可忽略 |
 | Market / News 数据返回为空 | 检查对应的 `COINGECKO_API_KEY` / `CRYPTOPANIC_API_KEY` 是否已配置 |
-| `uv sync` 报错找不到 Python | 确认已激活 `.venv` 虚拟环境，或使用 `uv venv .venv --python 3.12` 重新创建 |
+| `uv sync` 报错找不到 Python | 系统未安装 Python 3.11/3.12，或 `uv` 未正确安装；确认 `uv --version` 正常后再执行 `uv sync` |
 
 ## 测试
 
