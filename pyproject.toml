@@ -35,6 +35,7 @@ dependencies = [
     "ragas>=0.2,<0.3",
     # Logging
     "structlog>=24.0,<26.0",
+    "posthog<3.0.0",
 ]
 
 [dependency-groups]
@@ -62,3 +63,6 @@ select = ["E", "F", "I", "W"]
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["tests"]
+
+[tool.fastapi]
+entrypoint = "api.main:app"
