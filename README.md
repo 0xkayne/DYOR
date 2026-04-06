@@ -86,7 +86,7 @@ uv run python -m src.rag.ingest
 ### 6. 启动后端 API
 
 ```bash
-uv run uvicorn api.main:app --reload
+uv run fastapi dev api.main:app
 ```
 
 验证：访问 http://localhost:8000/health ，应返回 `{"status": "healthy", ...}`。
