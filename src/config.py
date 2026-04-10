@@ -46,5 +46,17 @@ class Settings(BaseSettings):
     # Knowledge Graph
     knowledge_graph_path: str = "./data/knowledge_graph/graph.graphml"
 
+    # Checkpointer
+    checkpointer_backend: str = "memory"  # memory | redis | postgres | redis_then_postgres
+    redis_url: str = "redis://localhost:6379/0"
+    redis_ttl_seconds: int = 604800  # 7 days
+    postgres_conn_string: str = ""
+
+    # Memory Selector
+    memory_selector_enabled: bool = True
+    summarization_threshold: int = 10
+    similarity_top_k: int = 3
+    max_context_messages: int = 20
+
 
 settings = Settings()
